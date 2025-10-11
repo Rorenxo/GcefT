@@ -1,6 +1,6 @@
 "use client"
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/components/ui/dialog"
 import { formatDateTime } from "@/lib/utils"
 import type { Event, Department } from "@/types"
 import { MapPin, User, CalendarIcon } from "lucide-react"

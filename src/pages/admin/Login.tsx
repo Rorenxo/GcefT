@@ -3,12 +3,12 @@
 import { useState, type FormEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import gcef1 from '../assets/gcef1.png';
-import BackgroundImage from '../assets/gc.jpg'; 
+import { Button } from "@/shared/components/ui/button"
+import { Input } from "@/shared/components/ui/input"
+import { Label } from "@/shared/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
+import gcef1 from '@/assets/gcef1.png';
+import BackgroundImage from '@/assets/gc.jpg'; 
 import { Calendar } from "lucide-react"
 
 export default function Login() {

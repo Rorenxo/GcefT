@@ -3,9 +3,9 @@
   import { NavLink } from "react-router-dom"
   import { Calendar, LayoutDashboard, List, Plus, LogOut } from "lucide-react"
   import { useAuth } from "@/hooks/useAuth"
-  import { Button } from "@/components/ui/button"
+  import { Button } from "@/shared/components/ui/button"
   import { cn } from "@/lib/utils"
-  import gcef1 from '../../assets/gcef1.png';
+  import gcef1 from '@/assets/gcef1.png';
 
 
   const navigation = [

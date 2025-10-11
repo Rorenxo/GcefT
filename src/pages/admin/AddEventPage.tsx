@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useEvents } from "@/hooks/useEvents"
-import EventForm from "@/components/events/EventForm"
+import EventForm from "@/shared/components/events/EventForm"
 import type { EventFormData } from "@/types"
 import { uploadImage } from "@/lib/imageUpload"
 

@@ -3,9 +3,9 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useEvents } from "@/hooks/useEvents"
-import Calendar from "@/components/calendar/Calendar"
-import EventModal from "@/components/calendar/EventModal"
-import { Button } from "@/components/ui/button"
+import Calendar from "@/shared/components/calendar/Calendar"
+import EventModal from "@/shared/components/calendar/EventModal"
+import { Button } from "@/shared/components/ui/button"
 import { Plus } from "lucide-react"
 import type { Event } from "@/types"
 

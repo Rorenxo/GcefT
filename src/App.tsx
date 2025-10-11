@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import { ProtectedRoute } from "@/components/ProtectedRoute"
-import Login from "@/pages/Login"
-import Dashboard from "@/pages/Dashboard"
-import CalendarPage from "@/pages/CalendarPage"
-import EventsPage from "@/pages/EventsPage"
-import AddEventPage from "@/pages/AddEventPage"
-import Layout from "@/components/layout/Layout"
+import { ProtectedRoute } from "@/shared/components/ProtectedRoute"
+import Login from "@/pages/admin/Login"
+import Dashboard from "@/pages/admin/Dashboard"
+import CalendarPage from "@/pages/admin/CalendarPage"
+import EventsPage from "@/pages/admin/EventsPage"
+import AddEventPage from "@/pages/admin/AddEventPage"
+import Layout from "@/shared/components/layout/adminlayout/Layout"
 
 function App() {
   return (

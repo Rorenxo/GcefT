@@ -1,7 +1,7 @@
 "use client"
 
 import { useEvents } from "@/hooks/useEvents"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { Calendar, Users, MapPin, TrendingUp } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 import type { Department } from "@/types"
