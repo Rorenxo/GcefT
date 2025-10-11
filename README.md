@@ -1,13 +1,13 @@
-# GCEF- GORDON COLLEGE EVENT 
+# GCEF- GORDON COLLEGE EVENT FEED 
 
-GCEF is a campus event calendar system designed to help students, organizers, and administrators manage and track school events efficiently.
+**GCEF** is a campus event calendar system designed to help students, organizers, and administrators manage and track school events efficiently.
 Our goal is to make a centralized all campus events and activities in one platform.
 
 ## Features 
-- **Authentication**: Secure admin login with Firebase Auth
-- **Dashboard**: Overview of events, departments, and statistics
-- **Event Management**: Create, read, update, and delete events
-- **Custom Calendar**: Interactive calendar with color-coded events by department
+- **Authentication**
+- **Admin side**
+- **Organizer side**
+- **Student side**
 
 ## Built with 
 - React 18.2.0
@@ -33,18 +33,18 @@ Our goal is to make a centralized all campus events and activities in one platfo
 Events are color-coded by department:
 
 - **CCS** (College of Computer Studies): Orange
-- **CEAS** (College of Engineering): Blue
-- **CAHS** (College of Allied Health): Red
-- **CHTM** (College of Hospitality): Pink
-- **CBA** (College of Business): Yellow
+- **CEAS** (College of  Education, Arts, and Sciences): Blue
+- **CAHS** (College of Allied Health Studies): Red
+- **CHTM** (College of Hospitality Tourism Management): Pink
+- **CBA** (College of Business and Accountancy): Yellow
 
 # Installation setup
-git clone https://github.com/Rorenxo/GCEF.git
-cd your-repo-name
-npm install
-npm run dev
+- git clone https://github.com/Rorenxo/GCEF.git
+- cd your-repo-name
+- npm install
+- npm run dev
 
-## 
-Created By: UIX 2025
--Lorenxo The Great - Frontend
--Jace the Backend - Backend
+## DEVELOPER
+- Created By: UIX 2025
+- Lorenxo The Great - Frontend
+- Jace the Backend - Backend
