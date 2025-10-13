@@ -27,17 +27,24 @@ export default function Auth() {
     setIsLoading(true)
     try {
       if (isLogin) {
+        if (!email.endsWith("@gcadmin.edu.ph")) {
+          alert("Only @gcadmin.edu.ph emails are allowed for admin login.")
+          setIsLoading(false)
+          return
+        }
         await signIn(email, password)
+        navigate("/admin") 
       } else {
 
-        if (!email.endsWith("@gordoncollege.edu.ph")) {
-          alert("Please use your gordoncollege.edu.ph email address.")
+        if (!email.endsWith("@gcadmin.edu.ph")) {
+          alert("Only @gcadmin.edu.ph emails are allowed for admin registration.")
           setIsLoading(false)
           return
         }
         await signUp(firstName, lastName, email, password)
+        navigate("/login")
+        setIsLogin(true)
       }
-      navigate("/")
     } catch (err) {
       console.error("Auth failed:", err)
     } finally {
@@ -46,6 +53,8 @@ export default function Auth() {
   }
 
   return (
+
+
     <div 
       className="relative flex min-h-screen items-center justify-center p-4"
       style={{
@@ -56,6 +65,18 @@ export default function Auth() {
       }}
     >
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+
+      <Button
+        type="button"
+        className="absolute top-4 left-4 bg-red-600 text-white hover:bg-red-700 z-20"
+        onClick={() => {
+          localStorage.removeItem("gcef_token")
+          localStorage.removeItem("gcef_token_expiry")
+          navigate("/")
+        }}
+      >
+        Leave
+      </Button>
 
       <Card className="relative z-10 w-full max-w-md border-zinc-800 bg-zinc-100/80 transition-all duration-500">
         <CardHeader className="space-y-1 text-center">
@@ -129,7 +150,6 @@ export default function Auth() {
               {isLoading ? (isLogin ? "Signing in..." : "Creating account...") : (isLogin ? "Sign In" : "Sign Up")}
             </Button>
 
-            {/* Toggle Button */}
             <div className="text-center mt-2 text-sm">
               {isLogin ? (
                 <p className="text-zinc-700">
@@ -159,9 +179,8 @@ export default function Auth() {
             {!isLogin && (
               <p className="text-xs text-center text-zinc-700 mt-4">
                 By signing up, you agree to our{" "}
-                <a href="/terms" className="text-green-600 hover:underline">Terms</a>,{" "}
-                <a href="/terms" className="text-green-600 hover:underline">Privacy Policy</a> and{" "}
-                <a href="/auth/terms" className="text-green-600 hover:underline">Cookies Policy</a>.
+                <a href="/terms" className="text-green-600 hover:underline">Terms</a> and{" "}
+                <a href="/terms" className="text-green-600 hover:underline">Privacy Policy</a> {" "}
               </p>
             )}
           </form>

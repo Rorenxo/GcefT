@@ -1,19 +1,16 @@
-
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { ProtectedRoute } from "@/shared/components/ProtectedRoute"
 import Login from "@/auth/adminAuth/Login" 
 import LandingPage from "@/pages/Landing" 
 import OrganizerLogin from "@/auth/organizerAuth/OrgLogin" 
-
+import TermsPage from "@/auth/terms";
 
 import Dashboard from "@/pages/admin/Dashboard"
 import CalendarPage from "@/pages/admin/CalendarPage"
 import EventsPage from "@/pages/admin/EventsPage"
 import AddEventPage from "@/pages/admin/AddEventPage"
 import AdminLayout from "@/shared/components/layout/adminlayout/Layout" 
-
-import TermsPage from "@/auth/terms";
+import OrganizerLayout from "@/shared/components/layout/organizerlayout/Olayout" 
 
 function App() {
   return (
@@ -25,7 +22,8 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/OrgLogin" element={<OrganizerLogin />} />
-         {/* <Route path="/student" element={<StudentLogin />} /> */} 
+        
+        
 
         <Route
           path="/admin" 
@@ -42,8 +40,23 @@ function App() {
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} /> 
+
+        <Route
+          path="/organizer" 
+          element={
+            <ProtectedRoute>
+              <OrganizerLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />   
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} /> 
         
       </Routes>
+
+      
     </BrowserRouter>
   )
 }

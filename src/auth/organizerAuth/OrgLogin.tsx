@@ -11,8 +11,7 @@ import gcef1 from '@/assets/gcef1.png';
 import BackgroundImage from '@/assets/gc.jpg'; 
 import { PasswordInput } from "@/shared/components/ui/passwordInput"
 
-
-export default function Auth() {
+export default function OrganizerAuth() {
   const [isLogin, setIsLogin] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const { signIn, signUp, error } = useAuth()
@@ -27,18 +26,23 @@ export default function Auth() {
     setIsLoading(true)
     try {
       if (isLogin) {
-        // Organizer login
-        await signIn(email, password)
-      } else {
-        // Organizer registration: enforce @gcorganizer.edu.ph
         if (!email.endsWith("@gcorganizer.edu.ph")) {
-          alert("Please use your gcorganizer.edu.ph email address.")
+          alert("Only @gcorganizer.edu.ph emails are allowed for organizer login.")
+          setIsLoading(false)
+          return
+        }
+        await signIn(email, password)
+        navigate("/organizer")
+      } else {
+        if (!email.endsWith("@gcorganizer.edu.ph")) {
+          alert("Only @gcorganizer.edu.ph emails are allowed for organizer registration.")
           setIsLoading(false)
           return
         }
         await signUp(firstName, lastName, email, password)
+        navigate("/OrgLogin")
+        setIsLogin(true)
       }
-      navigate("/")
     } catch (err) {
       console.error("Auth failed:", err)
     } finally {
@@ -58,14 +62,27 @@ export default function Auth() {
     >
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
+      <Button
+        type="button"
+        className="absolute top-4 left-4 bg-red-600 text-white hover:bg-red-700 z-20"
+        onClick={() => {
+          localStorage.removeItem("gcef_token")
+          localStorage.removeItem("gcef_token_expiry")
+          navigate("/")
+        }}
+      >
+        Leave
+      </Button>
+
+      {/* Auth Card */}
       <Card className="relative z-10 w-full max-w-md border-zinc-800 bg-zinc-100/80 transition-all duration-500">
         <CardHeader className="space-y-1 text-center">
           <img src={gcef1} alt="GCEF Logo" className="mx-auto mb-4 h-24 w-24 object-contain" />
           <CardTitle className="text-2xl font-bold text-black">
-            {isLogin ? "Organizer Login" : "Organizer Register"}
+            {isLogin ? "GCEF Organizer Login" : "GCEF Organizer Register"}
           </CardTitle>
           <CardDescription className="text-zinc-800">
-            {isLogin ? "Sign in to manage your events" : "Create your organizer account"}
+            {isLogin ? "Sign in to manage organization events" : "Create your GCEF organizer account"}
           </CardDescription>
         </CardHeader>
 
@@ -78,10 +95,10 @@ export default function Auth() {
                   <Input
                     id="firstName"
                     type="text"
-                    placeholder="John"
+                    placeholder="Juan"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    required
+                    required={!isLogin}
                     className="border-zinc-800 bg-zinc-100 text-black"
                   />
                 </div>
@@ -90,10 +107,10 @@ export default function Auth() {
                   <Input
                     id="lastName"
                     type="text"
-                    placeholder="Dela Cruz"
+                    placeholder="Santos"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    required
+                    required={!isLogin}
                     className="border-zinc-800 bg-zinc-100 text-black"
                   />
                 </div>
@@ -105,7 +122,7 @@ export default function Auth() {
               <Input
                 id="email"
                 type="email"
-                placeholder="you@gcorganizer.edu.ph"
+                placeholder="org@gcorganization.edu.ph"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -122,6 +139,7 @@ export default function Auth() {
                 required
               />
             </div>
+
             {error && (
               <div className="rounded-lg border border-red-900/50 bg-red-950/50 p-3 text-sm text-red-400">{error}</div>
             )}
@@ -129,8 +147,7 @@ export default function Auth() {
             <Button type="submit" className="w-full bg-green-600 text-white hover:bg-green-700" disabled={isLoading}>
               {isLoading ? (isLogin ? "Signing in..." : "Creating account...") : (isLogin ? "Sign In" : "Sign Up")}
             </Button>
-
-            {/* Toggle Button */}
+            
             <div className="text-center mt-2 text-sm">
               {isLogin ? (
                 <p className="text-zinc-700">
@@ -160,9 +177,8 @@ export default function Auth() {
             {!isLogin && (
               <p className="text-xs text-center text-zinc-700 mt-4">
                 By signing up, you agree to our{" "}
-                <a href="/terms" className="text-green-600 hover:underline">Terms</a>,{" "}
-                <a href="/terms" className="text-green-600 hover:underline">Privacy Policy</a> and{" "}
-                <a href="/auth/terms" className="text-green-600 hover:underline">Cookies Policy</a>.
+                <a href="/terms" className="text-green-600 hover:underline">Terms</a> and{" "}
+                <a href="/terms" className="text-green-600 hover:underline">Privacy Policy</a> {" "}
               </p>
             )}
           </form>
