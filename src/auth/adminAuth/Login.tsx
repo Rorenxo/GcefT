@@ -125,7 +125,7 @@ export default function Auth() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@gordoncollege.edu.ph"
+                placeholder="admin@gcadmin.edu.ph"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

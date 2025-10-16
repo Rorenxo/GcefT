@@ -122,7 +122,7 @@ export default function OrganizerAuth() {
               <Input
                 id="email"
                 type="email"
-                placeholder="org@gcorganization.edu.ph"
+                placeholder="org@gcorganizer.edu.ph"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
