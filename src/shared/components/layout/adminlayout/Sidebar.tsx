@@ -1,7 +1,7 @@
 "use client"
 
   import { NavLink } from "react-router-dom"
-  import { Calendar, LayoutDashboard, List, Plus, LogOut, UserCheck } from "lucide-react" 
+  import { Calendar, LayoutDashboard, List, Plus, LogOut, UserCheck, ChartPie } from "lucide-react" 
   import { useAuth } from "@/hooks/useAuth"
   import { Button } from "@/shared/components/ui/button"
   import { cn } from "@/lib/utils"
@@ -12,6 +12,7 @@
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Calendar", href: "/admin/calendar", icon: Calendar },
     { name: "Events", href: "/admin/events", icon: List },
+    { name: "Analytics", href: "/admin/analytics", icon: ChartPie },
     { name: "Pending Organizers", href: "/admin/pending-organizers", icon: UserCheck },
     { name: "Add Event", href: "/admin/add-event", icon: Plus },
   ]

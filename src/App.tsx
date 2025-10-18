@@ -14,6 +14,7 @@ import AddEventPage from "@/pages/admin/AddEventPage"
 import AdminLayout from "@/shared/components/layout/adminlayout/Layout" 
 import OrganizerLayout from "@/shared/components/layout/organizerlayout/Olayout" 
 import OrganizerDashboard from "@/pages/organizer/Dashboard"
+import AnalyticsPage from "@/pages/admin/Analytics"
 
 function App() {
   return (
@@ -40,7 +41,7 @@ function App() {
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="pending-organizers" element={<PendingOrganizersPage />} />
           <Route path="organizers/history" element={<ApprovedOrganizersHistoryPage />} />
-          <Route path="events" element={<EventsPage />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="events" element={<EventsPage />} />
           <Route path="add-event" element={<AddEventPage />} />
         </Route>
