@@ -1,21 +1,20 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { ProtectedRoute } from "@/shared/components/ProtectedRoute"
-import { ProtectedStudentRoute } from "@/shared/components/ProtectedStudentRoute"
-
-import Login from "@/auth/adminAuth/Login"
-import OrganizerLogin from "@/auth/organizerAuth/OrgLogin"
-import StudentLogin from "@/auth/studentAuth/StudentLogin"
-import LandingPage from "@/pages/Landing"
-import TermsPage from "@/auth/terms"
+import Login from "@/auth/adminAuth/Login" 
+import LandingPage from "@/pages/Landing" 
+import OrganizerLogin from "@/auth/organizerAuth/OrgLogin" 
+import TermsPage from "@/auth/terms";
 
 import Dashboard from "@/pages/admin/Dashboard"
 import CalendarPage from "@/pages/admin/CalendarPage"
 import EventsPage from "@/pages/admin/EventsPage"
+import PendingOrganizersPage from "@/pages/admin/PendingOrg"
+import ApprovedOrganizersHistoryPage from '@/pages/admin/ApproveHistory';
 import AddEventPage from "@/pages/admin/AddEventPage"
-import AdminLayout from "@/shared/components/layout/adminlayout/Layout"
-
-import Student from "@/pages/student/Student"
-import StudentLayout from "@/shared/components/layout/studentlayout/studentLayout"
+import AdminLayout from "@/shared/components/layout/adminlayout/Layout" 
+import OrganizerLayout from "@/shared/components/layout/organizerlayout/Olayout" 
+import OrganizerDashboard from "@/pages/organizer/Dashboard"
+import AnalyticsPage from "@/pages/admin/Analytics"
 
 function App() {
   return (
@@ -26,19 +25,8 @@ function App() {
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/OrgLogin" element={<OrganizerLogin />} />
-        <Route path="/student-login" element={<StudentLogin />} />
-
-        {/* ---------- STUDENT ROUTES ---------- */}
-        <Route
-          path="/student"
-          element={
-            <ProtectedStudentRoute>
-              <StudentLayout />
-            </ProtectedStudentRoute>
-          }
-        >
-          <Route index element={<Student />} />
-        </Route>
+        
+        
 
         {/* ---------- ADMIN ROUTES ---------- */}
         <Route
@@ -51,13 +39,31 @@ function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="calendar" element={<CalendarPage />} />
+          <Route path="pending-organizers" element={<PendingOrganizersPage />} />
+          <Route path="organizers/history" element={<ApprovedOrganizersHistoryPage />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="events" element={<EventsPage />} />
           <Route path="add-event" element={<AddEventPage />} />
         </Route>
 
-        {/* ---------- CATCH-ALL ---------- */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} /> 
+
+        <Route
+          path="/organizer" 
+          element={
+            <ProtectedRoute>
+              <OrganizerLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<OrganizerDashboard />} />  
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} /> 
+        
       </Routes>
+
+      
     </BrowserRouter>
   )
 }

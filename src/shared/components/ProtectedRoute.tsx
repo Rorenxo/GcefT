@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { Navigate } from "react-router-dom"
+import { Navigate, useLocation } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
 
 interface ProtectedRouteProps {
@@ -10,6 +10,7 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, loading } = useAuth()
+  const location = useLocation()
 
   if (loading) {
     return (
@@ -24,6 +25,19 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (!user) {
     return <Navigate to="/login" replace />
+  }
+
+  const email = user.email || ""
+  const path = location.pathname
+
+  if (path.startsWith("/admin") && !email.endsWith("@gcadmin.edu.ph")) {
+    return <Navigate to="/" replace />
+  }
+  if (path.startsWith("/organizer") && !email.endsWith("@gcorganizer.edu.ph")) {
+    return <Navigate to="/" replace />
+  }
+  if (path.startsWith("/student") && !email.endsWith("@gordoncollege.edu.ph")) {
+    return <Navigate to="/" replace />
   }
 
   return <>{children}</>
