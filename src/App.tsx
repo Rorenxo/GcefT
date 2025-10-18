@@ -20,24 +20,24 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        
-        <Route path="/" element={<LandingPage />} /> 
-        <Route path="/terms" element={<TermsPage />} /> 
-
+        {/* ---------- PUBLIC ROUTES ---------- */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/terms" element={<TermsPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/OrgLogin" element={<OrganizerLogin />} />
         
         
 
+        {/* ---------- ADMIN ROUTES ---------- */}
         <Route
-          path="/admin" 
+          path="/admin"
           element={
             <ProtectedRoute>
               <AdminLayout />
             </ProtectedRoute>
           }
         >
-          <Route index element={<Dashboard />} />   
+          <Route index element={<Dashboard />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="pending-organizers" element={<PendingOrganizersPage />} />
           <Route path="organizers/history" element={<ApprovedOrganizersHistoryPage />} />
