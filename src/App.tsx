@@ -58,6 +58,7 @@ function App() {
         </Route>
 
 
+
         {/* ---------- ORGANIZER ROUTES ---------- */}
         <Route
           path="/organizer"

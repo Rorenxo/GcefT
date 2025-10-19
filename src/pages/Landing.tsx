@@ -1,10 +1,6 @@
 
     import React from 'react';
-    import { 
-    FaUserGraduate, 
-    FaChalkboardTeacher, 
-    FaCog 
-    } from 'react-icons/fa';   
+    import { FaUserGraduate, FaChalkboardTeacher, FaCog } from 'react-icons/fa';   
     import '@/index.css';  
 
  
