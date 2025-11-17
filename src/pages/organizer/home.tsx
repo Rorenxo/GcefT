@@ -96,31 +96,46 @@ export default function Home() {
     localStorage.setItem("organizerUnreadCount", JSON.stringify(unreadCount))
   }, [notifications, unreadCount])
   useEffect(() => {
-    const currentUser = auth.currentUser
-    if (!currentUser) return setLoading(false)
+  const currentUser = auth.currentUser
+  if (!currentUser) return setLoading(false)
 
-    const setupSubscription = async () => {
-      let userRole = "organizer" // Default role
-      try {
-        const orgDocRef = doc(db, "organizers", currentUser.uid)
-        const adminDocRef = doc(db, "admins", currentUser.uid)
-        const [orgDocSnap, adminDocSnap] = await Promise.all([getDoc(orgDocRef), getDoc(adminDocRef)])
+  const setupSubscription = async () => {
+    let userRole = "organizer" // default role
 
-        if (adminDocSnap.exists() && adminDocSnap.data().role === 'admin') {
-          userRole = 'admin'
-        } else if (orgDocSnap.exists()) {
-          userRole = orgDocSnap.data().role || "organizer"
-        }
-      } catch (error) {
-        console.error("Error fetching user role:", error)
+    try {
+      // 1️⃣ Check if user is an organizer
+      const orgDocRef = doc(db, "organizers", currentUser.uid)
+      const orgDocSnap = await getDoc(orgDocRef)
+      if (orgDocSnap.exists()) {
+        userRole = orgDocSnap.data().role || "organizer"
       }
 
-      const eventsRef = collection(db, "events")
-      const q = userRole === "admin"
-        ? query(eventsRef)
-        : query(eventsRef, where("createdBy", "==", currentUser.uid))
+      // 2️⃣ Optional: Check if user is an admin
+      // This try/catch ensures we don't throw if not allowed
+      try {
+        const adminDocRef = doc(db, "admins", currentUser.uid)
+        const adminDocSnap = await getDoc(adminDocRef)
+        if (adminDocSnap.exists()) {
+          userRole = "admin"
+        }
+      } catch {
+        // ignore, user is not admin
+      }
+    } catch (error) {
+      console.error("Error fetching user role:", error)
+    }
 
-      const unsubscribe = onSnapshot(q, (snapshot) => {
+    // 3️⃣ Build the query based on role
+    const eventsRef = collection(db, "events")
+    const q =
+      userRole === "admin"
+        ? eventsRef // Admin sees all events
+        : query(eventsRef, where("createdBy", "==", currentUser.uid)) // Organizer sees own events
+
+    // 4️⃣ Subscribe to events
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
         const fetchedEvents: Event[] = snapshot.docs.map((doc) => {
           const data = doc.data()
           return {
@@ -137,19 +152,26 @@ export default function Home() {
         })
         setEvents(fetchedEvents)
         setLoading(false)
-      })
-      return unsubscribe
-    }
+      },
+      (error) => {
+        console.error("Error fetching events snapshot:", error)
+        setLoading(false)
+      }
+    )
 
-    let unsubscribe: (() => void) | undefined;
-    setupSubscription().then(unsub => {
-      if (unsub) unsubscribe = unsub
-    });
+    return unsubscribe
+  }
 
-    return () => {
-      if (unsubscribe) unsubscribe()
-    }
-  }, [user]);
+  let unsubscribe: (() => void) | undefined
+  setupSubscription().then((unsub) => {
+    if (unsub) unsubscribe = unsub
+  })
+
+  return () => {
+    if (unsubscribe) unsubscribe()
+  }
+}, [user])
+
 
   useEffect(() => {
     if (isInitialLoad.current) {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useParams, Link } from "react-router-dom"
-import { doc, getDoc } from "firebase/firestore"
+import { doc, getDoc, collection, getDocs, query } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { ArrowLeft } from "lucide-react"
 import { format } from "date-fns"
@@ -19,13 +19,24 @@ interface Event {
   professor?: string
 }
 
+interface AttendanceRecord {
+  id: string
+  studentNumber: string
+  studentName?: string
+  timestamp: any
+  organizerId: string
+}
+
 export default function EventDetails() {
-  const { organizerId, eventId } = useParams<{ organizerId: string; eventId: string }>()
+  const { eventId, organizerId } = useParams<{ eventId: string; organizerId: string }>()
   const [event, setEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // ---------------------------
+  // Load EVENT DETAILS
+  // ---------------------------
   useEffect(() => {
-    if (!organizerId || !eventId) return
+    if (!eventId) return
 
     const fetchEvent = async () => {
       try {
@@ -61,7 +72,7 @@ export default function EventDetails() {
     }
 
     fetchEvent()
-  }, [organizerId, eventId])
+  }, [eventId])
 
   if (loading)
     return (
@@ -74,10 +85,7 @@ export default function EventDetails() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-gray-500">
         <p className="mb-4 text-lg font-medium">Event not found.</p>
-        <Link
-          to="/organizer"
-          className="text-blue-600 hover:text-blue-800 underline"
-        >
+        <Link to="/organizer" className="text-blue-600 hover:text-blue-800 underline">
           Back to events
         </Link>
       </div>
@@ -110,30 +118,46 @@ export default function EventDetails() {
               />
             ))}
           </div>
+
           <div className="absolute bottom-0 left-0 bg-white/95 backdrop-blur-md text-gray-900 p-8 sm:p-10 w-full sm:w-2/3 rounded-tr-3xl">
-            <h1 className="text-3xl sm:text-4xl font-bold mb-3">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               {event.eventName}
             </h1>
+
+            {/* QR Scanner Button */}
+            <Link
+              to={`../scan/${eventId}`}
+              className="inline-block px-4 py-2 mb-4 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
+            >
+              Open QR Scanner
+            </Link>
+
+            {/* View Attendance Button */}
+            <Link
+              to={`../attendance/${eventId}`}
+              className="inline-block px-4 py-2 mb-6 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+            >
+              View Attendance
+            </Link>
+
             <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-500">
-              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
                 {event.department}
               </span>
-              <span> {event.location}</span>
+              <span>{event.location}</span>
               <span>
-                 {format(event.startDate, "MMM d, yyyy")} -{" "}
-                {format(event.endDate, "MMM d, yyyy")}
+                {format(event.startDate, "MMM d, yyyy")} - {format(event.endDate, "MMM d, yyyy")}
               </span>
             </div>
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              {event.description}
-            </p>
+
+            <p className="text-gray-700 mb-4 leading-relaxed">{event.description}</p>
             <p className="text-sm font-medium">
               <strong>Organizer:</strong> {event.professor}
             </p>
           </div>
         </div>
       ) : (
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row bg-white rounded-3xl shadow-lg overflow-hidden transition-all duration-500">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row bg-white rounded-3xl shadow-lg overflow-hidden">
           <div className="w-full lg:w-1/2">
             <img
               src={event.imageUrls[0]}
@@ -141,25 +165,39 @@ export default function EventDetails() {
               className="w-full h-[400px] lg:h-full object-cover"
             />
           </div>
-          <div className="w-full lg:w-1/2 p-8 sm:p-10 flex flex-col justify-center bg-white">
+
+          <div className="w-full lg:w-1/2 p-8 sm:p-10 flex flex-col justify-center">
             <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               {event.eventName}
             </h1>
 
+            {/* QR Scanner Button */}
+            <Link
+              to={`../scan/${eventId}`}
+              className="inline-block px-4 py-2 mb-4 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
+            >
+              Open QR Scanner
+            </Link>
+
+            {/* View Attendance Button */}
+            <Link
+              to={`../attendance/${eventId}`}
+              className="inline-block px-4 py-2 mb-6 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+            >
+              View Attendance
+            </Link>
+
             <div className="flex flex-wrap gap-4 mb-6 text-sm text-gray-500">
-              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
                 {event.department}
               </span>
-              <span> {event.location}</span>
+              <span>{event.location}</span>
               <span>
-                 {format(event.startDate, "MMM d, yyyy")} -{" "}
-                {format(event.endDate, "MMM d, yyyy")}
+                {format(event.startDate, "MMM d, yyyy")} - {format(event.endDate, "MMM d, yyyy")}
               </span>
             </div>
 
-            <p className="text-gray-700 leading-relaxed mb-8">
-              {event.description}
-            </p>
+            <p className="text-gray-700 leading-relaxed mb-8">{event.description}</p>
 
             <div className="grid sm:grid-cols-2 gap-6">
               <div>

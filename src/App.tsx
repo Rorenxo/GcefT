@@ -19,13 +19,14 @@ import AnalyticsPage from "@/pages/admin/Analytics"
 import AdminLayout from "@/shared/components/layout/adminlayout/Layout"
 
 // ---------- ORGANIZER ----------
+import EventAttendance from "@/pages/attendance/EventAttendance";
+import AttendanceScanner from "@/pages/attendance/AttendanceScanner";
 import OrganizerLayout from "@/shared/components/layout/organizerlayout/Olayout"
 import OrganizerDashboard from "@/pages/organizer/home"
 import EventDetails from "@/pages/organizer/EventDetails"
 import StatisticsPage from "@/pages/organizer/orgstats"
 import OrgEventPage from "@/pages/organizer/addEvent"
 import EditEventPage from "@/pages/organizer/EditEventPage"
-
 
 // ---------- STUDENT ----------
 import StudentLayout from "@/shared/components/layout/studentLayout/studentLayout"
@@ -36,6 +37,7 @@ import StudentEvents from "@/pages/student/StudentEvents"
 import StudentMessages from "@/pages/student/StudentMEssages"
 import StudentSettings from "@/pages/student/StudentSettings"
 import StudentProfilePage from "@/pages/student/StudentProfilePage"
+
 function App() {
   return (
     <BrowserRouter>
@@ -74,12 +76,19 @@ function App() {
             </ProtectedRoute>
           }
         >
-        <Route index element={<OrganizerDashboard />} />
-        <Route path="add-event" element={<OrgEventPage />} />
-        <Route path="statistics" element={<StatisticsPage />} />
-        <Route path="/organizer/:organizerId/events/:eventId" element={<EventDetails />} />
-        <Route path="edit-event/:eventId" element={<EditEventPage />} />
+          <Route index element={<OrganizerDashboard />} />
+          <Route path="add-event" element={<OrgEventPage />} />
+          <Route path="statistics" element={<StatisticsPage />} />
+          <Route path="edit-event/:eventId" element={<EditEventPage />} />
 
+          {/* Event Details */}
+          <Route path=":organizerId/events/:eventId" element={<EventDetails />} />
+
+          {/* Event Attendance (NOW INSIDE /organizer PROTECTED ROUTE) */}
+          <Route path="attendance/:eventId" element={<EventAttendance />} />
+
+          {/* QR Scanner */}
+          <Route path="scan/:eventId" element={<AttendanceScanner />} />
         </Route>
 
         {/* ---------- STUDENT ROUTES ---------- */}
@@ -91,17 +100,11 @@ function App() {
             </ProtectedRoute>
           }
         >
-          {/* Default feed */}
           <Route index element={<StudentFeed />} />
-          {/* Dashboard */}
           <Route path="dashboard" element={<StudentDashboard />} />
-          {/* Calendar */}
           <Route path="calendar" element={<StudentCalendar />} />
-          {/* My Events */}
           <Route path="events" element={<StudentEvents />} />
-          {/* Messages */}
           <Route path="messages" element={<StudentMessages />} />
-          {/* Settings */}
           <Route path="settings" element={<StudentSettings />} />
           <Route path="profile" element={<StudentProfilePage />} />
         </Route>
