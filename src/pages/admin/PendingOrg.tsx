@@ -25,7 +25,8 @@
     lastName: string;
     email: string;
         uid?: string;
-    // password?: string; // intentionally not stored for security
+    organizerName?: string;
+    // password?: string; 
     status: "pending" | "approved" | "denied" | "failed";
     }
 
@@ -61,6 +62,7 @@
             await setDoc(doc(db, "organizers", organizer.uid), {
                 firstName: organizer.firstName,
                 lastName: organizer.lastName,
+                organizerName: organizer.organizerName,
                 email: organizer.email,
                 role: "organizer",
                 status: "approved",
@@ -70,6 +72,7 @@
             await addDoc(collection(db, "organizers"), {
             firstName: organizer.firstName,
             lastName: organizer.lastName,
+            organizerName: organizer.organizerName,
             email: organizer.email,
             role: "organizer",
             status: "approved",
@@ -144,6 +147,7 @@
                     <TableHeader>
                     <TableRow className="border-zinc-200 bg-white shadow-lg">
                         <TableHead className="text-zinc-600">Name</TableHead>
+                        <TableHead className="text-zinc-600">Organizer Name</TableHead>
                         <TableHead className="text-zinc-600">Email</TableHead>
                         <TableHead className="text-right text-zinc-600">
                         Actions
@@ -158,6 +162,9 @@
                         >
                         <TableCell className="font-medium text-black">
                             {organizer.firstName} {organizer.lastName}
+                        </TableCell>
+                        <TableCell className="text-zinc-700">
+                            {organizer.organizerName}
                         </TableCell>
                         <TableCell className="text-zinc-700">
                             {organizer.email}

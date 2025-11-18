@@ -27,7 +27,7 @@ export default function OrgEventPage() {
         imageUrl = await uploadImage(data.image, { folder: "events", maxSizeMB: 5 })
       }
 
-      await addEvent(data, imageUrl)
+      await addEvent({ ...data, createdBy: user.uid }, imageUrl)
       alert("Event created successfully!")
       navigate("/organizer") 
     } catch (error: any) {

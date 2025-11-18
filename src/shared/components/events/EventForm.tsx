@@ -90,7 +90,7 @@ export default function EventForm({ onSubmit, initialData, isLoading }: EventFor
               onChange={(e) => setFormData({ ...formData, eventName: e.target.value })}
               required
               className="border-zinc-300 bg-zinc-50 text-zinc-900 placeholder:text-zinc-500 focus:border-blue-500"
-              placeholder="Annual Tech Conference"
+              placeholder="Hackathon"
             />
           </div>
 
@@ -155,7 +155,7 @@ export default function EventForm({ onSubmit, initialData, isLoading }: EventFor
 
             <div className="space-y-2">
               <Label htmlFor="professor" className="text-zinc-700">
-                Professor
+                Organizer
               </Label>
               <Input
                 id="professor"
@@ -163,7 +163,7 @@ export default function EventForm({ onSubmit, initialData, isLoading }: EventFor
                 onChange={(e) => setFormData({ ...formData, professor: e.target.value })}
                 required
                 className="border-zinc-300 bg-zinc-50 text-zinc-900 placeholder:text-zinc-500 focus:border-blue-500"
-                placeholder="Sir. John Smith"
+                placeholder="Student Council"
               />
             </div>
           </div>

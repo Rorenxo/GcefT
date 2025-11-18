@@ -115,10 +115,10 @@ export default function EventAttendance() {
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
         <Link
-          to={`/organizer/${eventId}`}
+          to="/organizer"
           className="inline-flex items-center text-gray-700 hover:text-gray-900 mb-6"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" /> Back to Event
+          <ArrowLeft className="h-4 w-4 mr-2" /> Back to Home
         </Link>
 
         <h1 className="text-2xl font-bold mb-4">
