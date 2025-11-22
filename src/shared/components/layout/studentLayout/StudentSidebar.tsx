@@ -38,8 +38,8 @@ export default function StudentSidebar({ closeSidebar }: StudentSidebarProps) {
 
   return (
     <div
-      className="flex h-screen w-55 flex-col  rounded-tr-xl rounded-br-xl
-                 bg-[#048f15]
+      className="flex h-screen w-60 flex-col  rounded-tr-xl rounded-br-xl
+                 bg-[#679436]/95
                  shadow-lg" 
     >
       {/* ---------- Header ---------- */}
