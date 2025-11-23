@@ -1,15 +1,15 @@
   "use client"
 
-  import { motion, AnimatePresence } from "framer-motion"
-  import { useEffect, useState, useRef } from "react"
-  import { Link, useNavigate } from "react-router-dom"
+  import { motion, AnimatePresence, wrap } from "framer-motion"
+  import { useEffect, useState, useRef, ComponentType } from "react"
+  import { Link } from "react-router-dom"
   import {collection,query,orderBy,onSnapshot,doc,updateDoc,arrayUnion,arrayRemove,addDoc,serverTimestamp} from "firebase/firestore"
   import { db } from "@/lib/firebase"
   import useAuth from "@/shared/components/useStudentAuth"
-  import {Calendar,MapPin,Heart,MessageCircle,Send,Search,Bell,User,ArrowRight,Eye,Settings, X, ZoomIn, ZoomOut, LogOut} from "lucide-react"
+  import {Calendar,MapPin,Heart,MessageCircle,Send,ArrowLeft,ArrowRight,Eye,Settings, X, ZoomIn, ZoomOut, LogOut} from "lucide-react"
   import { format } from "date-fns"
   import { Timestamp } from "firebase/firestore"
-  import welcomeBg from '@/assets/studs.png'
+  import { useStudentLayoutContext } from "@/shared/components/layout/studentLayout/studentLayout"
 
   type EventType = {
     id: string
@@ -22,6 +22,7 @@
     description?: string
     imageUrl?: string
     hearts?: string[]
+    category?: 'School Event' | 'Seminar' | 'Activity' | 'Social';
   }
 
   type CommentType = {
@@ -32,16 +33,45 @@
     createdAt: Timestamp
   }
 
+  const featuredEventsData = [
+    {
+      id: 'featured-1',
+      title: 'GC APERTURA',
+      description: 'Witness the clash of champions. A week of sports, spirit, and unity.',
+      imageUrl: 'src/assets/APERTURA.png',
+    },
+    {
+      id: 'featured-2',
+      title: 'GC Foundation Week',
+      description: 'Celebrate our history and future with a series of special events and activities.',
+      imageUrl: 'src/assets/FOUNDING.jpg',
+    },
+    {
+      id: 'featured-3',
+      title: 'GC SIKLAB SPORTFEST',
+      description: 'Explore the future of technology with industry leaders and innovators.',
+      imageUrl: 'src/assets/SPORTSFEST.png',
+    },
+    {
+      id: 'featured-4',
+      title: 'GC-CCS ACQUAINTANCE',
+      description: 'A vibrant showcase of student talent in music, dance, and visual arts.',
+      imageUrl: 'src/assets/ACC.jpg',
+    }
+  ];
+
   export default function StudentFeed() {
     const [events, setEvents] = useState<EventType[]>([])
     const [loading, setLoading] = useState(true)
-    const [searchQuery, setSearchQuery] = useState("")
+    const { searchQuery } = useStudentLayoutContext();
+    const [activeFilter, setActiveFilter] = useState('All');
     const { user } = useAuth()
     const [commentModalEvent, setCommentModalEvent] = useState<EventType | null>(null)
     const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
+    const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
     const profileMenuRef = useRef<HTMLDivElement>(null);
-    const navigate = useNavigate();
-
+    const sliderRef = useRef<HTMLDivElement>(null);
+    
     useEffect(() => {
       const q = query(collection(db, "events"), orderBy("startDate", "desc"))
       const unsub = onSnapshot(q, (snap) => {
@@ -72,7 +102,28 @@
       };
     }, []);
 
+    const [[page, direction], setPage] = useState([0, 0]);
+    const slideIndex = wrap(0, featuredEventsData.length, page);
 
+    const paginate = (newDirection: number) => {
+      setPage([page + newDirection, newDirection]);
+    };
+
+    const goToSlide = (slideIndex: number) => {
+      const newDirection = slideIndex > page ? 1 : -1;
+      setPage([slideIndex, newDirection]);
+    }
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        paginate(1);
+      }, 5000); 
+
+      return () => clearInterval(interval);
+    }, [page]);
+
+
+    
     const toggleLike = async (eventId: string) => {
       if (!user) return alert("Please sign in to like posts")
         
@@ -124,10 +175,15 @@
       )
     }
 
-    const searchFilteredEvents = events.filter(
-      (event) =>
-        event.eventName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        event.description?.toLowerCase().includes(searchQuery.toLowerCase()),
+    const searchFilteredEvents = events.filter((event) => {
+        const searchMatch =
+            event.eventName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            event.description?.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const categoryMatch = activeFilter === 'All' || event.category === activeFilter;
+
+        return searchMatch && categoryMatch;
+    }
     )
 
     const today = new Date()
@@ -137,6 +193,12 @@
     const sevenDaysFromNow = new Date(today)
     sevenDaysFromNow.setDate(today.getDate() + 7)
 
+    const trendingEvents = searchFilteredEvents
+      .filter(event => event.startDate >= today && (event.hearts?.length || 0) > 0) 
+      .sort((a, b) => (b.hearts?.length || 0) - (a.hearts?.length || 0)) 
+      .slice(0, 3); 
+
+
     const todaysEvents = searchFilteredEvents.filter(event => event.startDate >= today && event.startDate <= endOfToday);
 
     const upcomingEvents = searchFilteredEvents.filter(event => event.startDate > endOfToday && event.startDate <= sevenDaysFromNow);
@@ -144,80 +206,75 @@
     const pastEvents = searchFilteredEvents.filter(event => event.startDate < today);
 
     return (
-      <div className="flex h-screen overflow-hidden bg-background">
-        {/* Main Feed */}
-        <main className="flex-1 flex flex-col overflow-hidden pt-4">
-          <div className="bg-card px-4 md:px-8 py-4 shadow-sm relative z-10">
-            <div className="flex items-center gap-4 w-full">
-              <div className="flex-1">
-                {/* This space can be used for a logo or title if needed in the future */}
-              </div>
-              <div className="flex items-center gap-4">
-                {/* Search Bar */}
-                <div className="relative flex items-center w-64">
-                <Search className="absolute left-3 h-4 w-4 text-muted-foreground pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Search events..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-lg bg-muted/40 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm h-9"
-                />
-              </div>
-                <button className="p-2 rounded-full hover:bg-muted/40 transition-colors"><Bell className="h-5 w-5 text-muted-foreground" /></button>              
-                <div className="relative" ref={profileMenuRef}>
-                  <button 
-                    onClick={() => setProfileMenuOpen(prev => !prev)}
-                    className="p-1.5 rounded-full bg-green-100 hover:bg-green-200 transition-colors ring-2 ring-green-500"
-                  >
-                    <User className="h-5 w-5 text-green-800" />
+      <>
+          <section className="bg-gradient-to-b from-slate-50 to-white pt-4">
+            <div className="relative px-4 md:px-8 ">
+              <div className="relative h-96 w-full overflow-hidden">
+                <AnimatePresence initial={false} custom={direction}>
+                  <FeaturedEventCard
+                    key={page}
+                    title={featuredEventsData[slideIndex].title}
+                    description={featuredEventsData[slideIndex].description}
+                    imageUrl={featuredEventsData[slideIndex].imageUrl}
+                    direction={direction}
+                  />
+                </AnimatePresence>
+                <div className="absolute top-1/2 -translate-y-1/2 left-2 md:left-4 z-20">
+                  <button onClick={() => paginate(-1)} className="bg-white/60 hover:bg-white backdrop-blur-sm rounded-full p-2 shadow-md transition-all">
+                    <ArrowLeft className="h-6 w-6 text-gray-800" />
                   </button>
-                  <AnimatePresence>
-                    {isProfileMenuOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="absolute right-0 mt-4 w-48 bg-white rounded-lg border border-border-gray-700 shadow-2xl z-20 overflow-hidden"
-                      >
-                        <div className="p-2">
-                          <Link to="/student/profile" onClick={() => setProfileMenuOpen(false)} className="flex items-center gap-3 w-full px-3 py-2 text-sm text-foreground hover:bg-muted rounded-md transition-colors">
-                            <User className="h-4 w-4" /> Account
-                          </Link>
-                          <Link to="/student/settings" onClick={() => setProfileMenuOpen(false)} className="flex items-center gap-3 w-full px-3 py-2 text-sm text-foreground hover:bg-muted rounded-md transition-colors">
-                            <Settings className="h-4 w-4" /> Settings
-                          </Link>
-                          <button onClick={() => { /* Add logout logic here */ navigate('/login'); }} className="flex items-center gap-3 w-full px-3 py-2 text-sm text-destructive hover:bg-destructive/10 rounded-md transition-colors">
-                            <LogOut className="h-4 w-4" /> Logout
-                          </button>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                </div>
+                <div className="absolute top-1/2 -translate-y-1/2 right-2 md:right-4 z-20">
+                  <button onClick={() => paginate(1)} className="bg-white/60 hover:bg-white backdrop-blur-sm rounded-full p-2 shadow-md transition-all">
+                    <ArrowRight className="h-6 w-6 text-gray-800" />
+                  </button>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Events Content */}
-          <section className="flex-1 overflow-y-auto bg-gradient-to-b from-slate-50 to-white">
-            {/* Hero Banner */}
-            <div className="sticky top-0 z-10 group relative w-full h-32 md:h-40 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 overflow-hidden shadow-lg">
-              <img 
-                src={welcomeBg} 
-                alt="Welcome background" 
-                className="absolute inset-0 w-full h-full object-cover opacity-30" />
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/70 via-purple-600/70 to-pink-600/70 flex flex-col justify-center items-start p-6 md:p-10 text-white">
-                <h4 className="text-2xl md:text-3xl font-bold mb-1">
-                  Welcome back, {user?.displayName || "Student"}!
-                </h4>
-                <p className="text-white/90 text-sm md:text-base font-light">
-                  Discover amazing events on campus
-                </p>
+              {/* Slider Dots */}
+              <div className="flex justify-center gap-2 mt-4">
+                {featuredEventsData.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => goToSlide(index)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                      slideIndex === index ? 'bg-green-600 scale-125' : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
               </div>
             </div>
 
-            {/* Main Feed */}
+            {/* Category Filters */}
+            <div className="px-4 md:px-8 py-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6">
+                <FilterCard
+                  label="All Events"
+                  imageUrl="src/assets/campusEvent.jpg"
+                  isActive={activeFilter === 'All'}
+                  onClick={() => setActiveFilter('All')}
+                />
+                <FilterCard
+                  label="Seminars"
+                  imageUrl="src/assets/gcSeminar.jpg"
+                  isActive={activeFilter === 'Seminar'}
+                  onClick={() => setActiveFilter('Seminar')}
+                />
+                <FilterCard
+                  label="Activities"
+                  imageUrl="src/assets/gcAct.jpg"
+                  isActive={activeFilter === 'Activity'}
+                  onClick={() => setActiveFilter('Activity')}
+                />
+                <FilterCard
+                  label="Social"
+                  imageUrl="src/assets/socialGC.jpg"
+                  isActive={activeFilter === 'Social'}
+                  onClick={() => setActiveFilter('Social')}
+                />
+              </div>
+            </div>
+
             <div className="p-4 md:p-6">
               {searchFilteredEvents.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20">
@@ -231,6 +288,27 @@
                 </div>
               ) : (
                 <div className="space-y-10">
+                  {/* Trending Events */}
+                  {trendingEvents.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="flex items-center gap-2">
+                          <div className="w-1 h-8 bg-gradient-to-b from-pink-500 to-rose-500 rounded-full"></div>
+                          <h3 className="text-2xl font-bold text-foreground">Trending Now</h3>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 gap-6">
+                        {trendingEvents.map((event) => (
+                          <TrendingEventCard
+                            key={`trending-${event.id}`}
+                            event={event}
+                            onCommentClick={(event) => setCommentModalEvent(event)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Upcoming Events */}
                   {upcomingEvents.length > 0 && (
                     <div>
@@ -312,8 +390,6 @@
               )}
             </div>
           </section>
-        </main>
-
         <AnimatePresence>
           {commentModalEvent && (
             <ExpandedEventCard
@@ -325,12 +401,85 @@
           )}
         </AnimatePresence>
 
+        <AnimatePresence>
+          {isLogoutConfirmOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6"
+              >
+                <h3 className="text-lg font-bold text-gray-900">Confirm Logout</h3>
+                <p className="text-sm text-gray-600 mt-2">Are you sure you want to log out of your account?</p>
+                <div className="mt-6 flex justify-end gap-3">
+                  <button
+                    onClick={() => setIsLogoutConfirmOpen(false)}
+                    className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button onClick={() => { /* This will now use the layout's handleLogout */ }} className="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+                    Logout
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      </div>
+      </>
     )
   }
 
-  // Removed: EventSection - no longer used in redesigned feed
+  const sliderVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0
+    })
+  };
+
+  const FeaturedEventCard = ({ title, description, imageUrl, direction }: { title: string, description: string, imageUrl: string, direction: number }) => {
+    return (
+      <motion.div 
+        key={title}
+        custom={direction}
+        variants={sliderVariants}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
+        className="absolute h-96 w-full rounded-2xl overflow-hidden group cursor-pointer shadow-xl"
+      >
+        <img src={imageUrl} alt={title} className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 p-6 md:p-8 text-white w-full md:w-3/4 lg:w-2/3">
+          <h3 className="text-3xl md:text-4xl font-bold drop-shadow-lg">{title}</h3>
+          <p className="text-sm md:text-base text-white/90 mt-2 line-clamp-2 drop-shadow-md">{description}</p>
+          <button className="mt-4 inline-flex items-center gap-2 text-sm font-bold bg-white text-black px-5 py-2.5 rounded-lg shadow-lg hover:bg-gray-200 transition-colors transform hover:-translate-y-0.5">
+            Learn More <ArrowRight className="h-4 w-4" />
+          </button>
+        </div>
+      </motion.div>
+    );
+  };
+
+
 
   function EventCard({ 
     event,
@@ -450,13 +599,77 @@
     )
   }
 
+  function TrendingEventCard({ event, onCommentClick }: { event: EventType, onCommentClick: (event: EventType) => void }) {
+    const { user } = useAuth();
+    const hearts = event.hearts ?? [];
+    const liked = user && user.uid && hearts.includes(user.uid);
+
+    return (
+        <motion.div 
+            whileHover={{ y: -5 }} 
+            transition={{ duration: 0.2 }}
+            onClick={() => onCommentClick(event)}
+            className="group relative rounded-2xl overflow-hidden bg-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col md:flex-row h-auto md:h-48"
+        >
+            {/* Image */}
+            <div className="w-full md:w-2/5 h-48 md:h-auto relative flex-shrink-0">
+                <img
+                    src={event.imageUrl || 'src/assets/placeholder.jpg'}
+                    alt={event.eventName || "Event"}
+                    className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            </div>
+
+            {/* Content */}
+            <div className="flex flex-col p-5">
+                <h3 className="text-xl font-bold text-foreground mb-2 line-clamp-2">{event.eventName}</h3>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-2 flex-grow">{event.description}</p>
+                <div className="flex items-center gap-4 text-xs text-muted-foreground mt-auto">
+                    <div className="flex items-center gap-1.5">
+                        <Calendar className="h-3.5 w-3.5" />
+                        <span>{format(event.startDate, "MMM dd, yyyy")}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5" />
+                        <span>{event.location}</span>
+                    </div>
+                    <div className={`flex items-center gap-1.5 font-semibold ${liked ? 'text-red-500' : ''}`}>
+                        <Heart className="h-3.5 w-3.5" />
+                        <span>{hearts.length} Likes</span>
+                    </div>
+                </div>
+            </div>
+        </motion.div>
+    );
+}
+
+  const FilterCard = ({ label, imageUrl, isActive, onClick }: { label: string, imageUrl: string, isActive: boolean, onClick: () => void }) => {
+    return (
+      <motion.div
+        onClick={onClick}
+        className={`relative h-24 rounded-full bg-cover bg-center shadow-lg overflow-hidden group cursor-pointer transition-all duration-300 transform hover:-translate-y-1 ${isActive ? 'ring-4 ring-offset-2 ring-[#7cb93c]' : 'ring-0'}`}
+        style={{ backgroundImage: `url(${imageUrl})` }}
+      >
+        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300"></div>
+        <div className="absolute inset-0 flex items-center justify-center p-2">
+          <h4 className="text-white font-bold text-sm md:text-base lg:text-lg text-center drop-shadow-md">
+            {label}
+          </h4>
+        </div>
+      </motion.div>
+    );
+  };
+
+
+
   function ExpandedEventCard({ event, onClose, onLike, onComment }: { event: EventType, onClose: () => void, onLike: (id: string) => void, onComment: (id: string, text: string) => void }) { // eslint-disable-line
     const [comment, setComment] = useState("")
     const [comments, setComments] = useState<CommentType[]>([])
     const [scale, setScale] = useState(1);
     const [fitType, setFitType] = useState<'cover' | 'contain'>('cover');
 
-    const { user } = useAuth() // We can use this or the passed currentUser
+    const { user } = useAuth() 
     useEffect(() => {
       const q = query(collection(db, "events", event.id, "comments"), orderBy("createdAt", "asc"))
       const unsub = onSnapshot(q, (snap) => {

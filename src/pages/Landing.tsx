@@ -35,7 +35,7 @@
                         <a href="#features" className="text-white hover:text-black px-3 py-2 rounded-md text-sm font-medium transition-colors">Features</a>
                         <a href="#how-it-works" className="text-white hover:text-black px-3 py-2 rounded-md text-sm font-medium transition-colors">How It Works</a>
                         <a href="#faq" className="text-white hover:text-black px-3 py-2 rounded-md text-sm font-medium transition-colors">FAQ</a>
-                        <a href="/student-login" className="bg-white text-green-800 hover:bg-yellow-300 px-4 py-2 rounded-md text-sm font-bold transition-colors">Login</a>
+                        <a href="/student-login" className="bg-white text-[#7cb93c] hover:bg-gray-200 px-4 py-2 rounded-md text-sm font-bold transition-colors">Login</a>
                     </div>
                 </div>
             </div>
@@ -47,16 +47,16 @@
                 id="mobile-menu"
             >
                 <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                    <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-white hover:bg-gray-100 hover:text-green-600 block px-3 py-2 rounded-md text-base font-medium">Features</a>
-                    <a href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-white hover:bg-gray-100 hover:text-green-600 block px-3 py-2 rounded-md text-base font-medium">How It Works</a>
-                    <a href="#faq" onClick={() => setIsMobileMenuOpen(false)} className="text-white hover:bg-gray-100 hover:text-green-600 block px-3 py-2 rounded-md text-base font-medium">FAQ</a>
-                    <a href="/student-login" onClick={() => setIsMobileMenuOpen(false)} className="bg-green-600 text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold text-center">Login</a>
+                    <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-white hover:bg-white/20 block px-3 py-2 rounded-md text-base font-medium">Features</a>
+                    <a href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-white hover:bg-white/20 block px-3 py-2 rounded-md text-base font-medium">How It Works</a>
+                    <a href="#faq" onClick={() => setIsMobileMenuOpen(false)} className="text-white hover:bg-white/20 block px-3 py-2 rounded-md text-base font-medium">FAQ</a>
+                    <a href="/student-login" onClick={() => setIsMobileMenuOpen(false)} className="bg-white text-[#7cb93c] hover:bg-gray-200 block px-3 py-2 rounded-md text-base font-bold text-center">Login</a>
                 </div>
             </div>
         </nav>
 
-        <header
-            className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white relative overflow-hidden"
+        <header 
+            className="bg-[#7cb93c] text-white relative overflow-hidden"
             style={{
             backgroundImage: 'url(src/assets/gc.jpg)', 
             backgroundSize: 'cover',
@@ -68,7 +68,7 @@
             <div className="animate-fade-in">
             <div className="flex justify-center items-center gap-6 mb-6">
                 <div className="flex justify-center items-center gap-6 mb-6">
-                <div className="w-20 h-20 rounded-full overflow-hidden shadow-lg border-4 border-green-400">
+                <div className="w-20 h-20 rounded-full overflow-hidden shadow-lg border-4 border-white/80">
                     <img
                     src="src/assets/gcef1.png"
                     alt="GCEF Logo"
@@ -78,14 +78,14 @@
 
                 </div>
             </div>
-                <h1 className="text-6xl md:text-7xl font-bold mb-6 drop-shadow-lg text-green-400">
+                <h1 className="text-6xl md:text-7xl font-bold mb-6 drop-shadow-lg text-white">
                 GCEF
                 </h1>
                 <h2 className="text-3xl md:text-4xl font-semibold mb-6 leading-tight">
                 Welcome to the Gordon College Event Feed Portal
                 </h2>
 
-                <p className="text-xl md:text-2xl text-green-100 max-w-3xl mx-auto opacity-90">
+                <p className="text-xl md:text-2xl text-white max-w-3xl mx-auto opacity-90">
                 Your gateway to all school events, schedules, and activities.<br></br>
                 Stay connected and informed with us.
                 </p>
@@ -106,11 +106,11 @@
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <a
                 href="/student-login" 
-                className="group block bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 ease-in-out p-8 text-center border-2 border-gray-100 hover:border-green-500 hover:bg-green-50 animate-fade-in-item"
+                className="group block bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 ease-in-out p-8 text-center border-2 border-gray-100 hover:border-[#7cb93c] hover:bg-green-50 animate-fade-in-item"
                 aria-label="Student Portal"
             >
-                <div className="mx-auto mb-6 p-4 bg-green-100 rounded-full w-20 h-20 flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                <FaUserGraduate className="text-3xl text-green-600 group-hover:text-green-700" />
+                <div className="mx-auto mb-6 p-4 bg-green-100 rounded-full w-20 h-20 flex items-center justify-center group-hover:bg-[#d9efc4] transition-colors">
+                <FaUserGraduate className="text-3xl text-[#7cb93c]" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-green-700">
                 Student Portal
@@ -122,11 +122,11 @@
 
             <a
                 href="/OrgLogin"
-                className="group block bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 ease-in-out p-8 text-center border-2 border-gray-100 hover:border-green-500 hover:bg-green-50 animate-fade-in-item"
+                className="group block bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 ease-in-out p-8 text-center border-2 border-gray-100 hover:border-[#7cb93c] hover:bg-green-50 animate-fade-in-item"
                 aria-label="Organizer Portal"
             >
-                <div className="mx-auto mb-6 p-4 bg-green-100 rounded-full w-20 h-20 flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                <FaChalkboardTeacher className="text-3xl text-green-600 group-hover:text-green-700" />
+                <div className="mx-auto mb-6 p-4 bg-green-100 rounded-full w-20 h-20 flex items-center justify-center group-hover:bg-[#d9efc4] transition-colors">
+                <FaChalkboardTeacher className="text-3xl text-[#7cb93c]" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-green-700">
                 Organizer Portal
@@ -137,11 +137,11 @@
             </a>
             <a
                 href="/admin"
-                className="group block bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 ease-in-out p-8 text-center border-2 border-gray-100 hover:border-green-500 hover:bg-green-50 animate-fade-in-item"
+                className="group block bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 ease-in-out p-8 text-center border-2 border-gray-100 hover:border-[#7cb93c] hover:bg-green-50 animate-fade-in-item"
                 aria-label="Admin Portal"
             >
-                <div className="mx-auto mb-6 p-4 bg-green-100 rounded-full w-20 h-20 flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                <FaCog className="text-3xl text-green-600 group-hover:text-green-700" />
+                <div className="mx-auto mb-6 p-4 bg-green-100 rounded-full w-20 h-20 flex items-center justify-center group-hover:bg-[#d9efc4] transition-colors">
+                <FaCog className="text-3xl text-[#7cb93c]" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-green-700">
                 Admin Portal
@@ -204,17 +204,17 @@
             className="relative bg-contain bg-center py-24"
             style={{ backgroundImage: "url('/src/assets/regCTA.jpg')" }}
         >
-            <div className="absolute inset-0 bg-green-800 opacity-80"></div>
+            <div className="absolute inset-0 bg-[#7cb93c] opacity-80"></div>
             <div className="relative max-w-4xl mx-auto px-6 sm:px-6 lg:px-8 text-center text-white animate-fade-in">
-                <h3 className="text-4xl font-bold mb-4 text-green-100">
+                <h3 className="text-4xl font-bold mb-4 text-white">
                     Empower Your Organization
                 </h3>
-                <p className="text-xl text-green-200 mb-8 max-w-3xl mx-auto">
+                <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
                     Are you a student council or campus organizer? Streamline your event management, boost attendance, and gain valuable insights with GCEF's powerful tools.
                 </p>
                 <a
                     href="/OrgLogin/"
-                    className="inline-block bg-white text-green-600 font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-gray-100 hover:text-green-700 transition-all duration-300 transform hover:-translate-y-1 text-lg"
+                    className="inline-block bg-white text-[#7cb93c] font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#6aa334] transition-all duration-300 transform hover:-translate-y-1 text-lg"
                 >
                     Register as an Organizer
                 </a>
@@ -303,7 +303,7 @@
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                 <div>
-                <h4 className="text-xl font-bold text-green-400 mb-4">Gordon College Event Feed</h4>
+                <h4 className="text-xl font-bold text-[#7cb93c] mb-4">Gordon College Event Feed</h4>
                 <p className="text-gray-400">
                     Your Official Guide to Gordon College Centralized Event Portal.
                 </p>
@@ -312,7 +312,7 @@
                 <h5 className="font-semibold mb-4">GCEF Portal</h5>
                 <p className="text-gray-400">
                     © 2025 Gordon College. All rights reserved. | 
-                    <a href="/terms" className="text-green-400 hover:underline ml-1">Privacy Policy</a>
+                    <a href="/terms" className="text-[#7cb93c] hover:underline ml-1">Privacy Policy</a>
                 </p>
                 </div>
                             <div>
@@ -340,8 +340,8 @@
                 style={{ animationDelay }}
             >
                 <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-gray-100 h-full flex flex-col">
-                    <p className="text-lg font-bold text-blackmb-2">Step {step}</p>
-                    <div className="mx-auto mb-4 flex items-center justify-center w-16 h-16 bg-white-100 rounded-full border-2 border-white shadow-lg relative z-10">
+                    <p className="text-lg font-bold text-[#7cb93c] mb-2">Step {step}</p>
+                    <div className="mx-auto mb-4 flex items-center justify-center w-16 h-16 bg-green-100 rounded-full border-4 border-[#d9efc4] relative z-10">
                         <div className="text-3xl text-[#7cb93c]">{icon}</div>
                     </div>
                     <h4 className="text-xl font-bold text-gray-900 mb-2">{title}</h4>
@@ -361,7 +361,7 @@
                 style={{ animationDelay }}
                 aria-hidden="true"
             >
-                <FaArrowRight className="text-4xl text-[#7cb93c]" />
+                <FaArrowRight className="text-4xl text-gray-300" />
             </div>
         );
     };
@@ -373,7 +373,7 @@
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="w-full flex justify-between items-center text-left p-5 font-semibold text-gray-800 hover:bg-gray-50 focus:outline-none focus-visible:ring focus-visible:ring-green-500 focus-visible:ring-opacity-50"
+                    className="w-full flex justify-between items-center text-left p-5 font-semibold text-gray-800 hover:bg-gray-50 focus:outline-none focus-visible:ring focus-visible:ring-[#7cb93c] focus-visible:ring-opacity-50"
                     aria-expanded={isOpen}
                 >
                     <span className="text-lg">{question}</span>

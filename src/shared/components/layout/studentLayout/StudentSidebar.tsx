@@ -6,12 +6,8 @@ import {
   Home,
   Calendar,
   List,
-  MessageCircle,
-  Settings,
-  LogOut,
 } from "lucide-react";
 import { auth } from "@/lib/firebase";
-import { Button } from "@/shared/components/ui/button";
 import gcef1 from "@/assets/gcef1.png";
 import { cn } from "@/lib/utils";
 
@@ -27,19 +23,10 @@ interface StudentSidebarProps {
 }
 
 export default function StudentSidebar({ closeSidebar }: StudentSidebarProps) {
-  const handleLogout = async () => {
-    try {
-      await auth.signOut();
-      window.location.href = "/student-login";
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
   return (
     <div
       className="flex h-screen w-60 flex-col  rounded-tr-xl rounded-br-xl
-                 bg-[#679436]/95
+                 bg-[#7cb93c]/95
                  shadow-lg" 
     >
       {/* ---------- Header ---------- */}
@@ -82,15 +69,9 @@ export default function StudentSidebar({ closeSidebar }: StudentSidebarProps) {
 
       {/* ---------- Footer ---------- */}
       <div className="border-t border-green-900/50 p-4">
-        <Button
-          onClick={handleLogout}
-          variant="outline"
-          className="w-full bg-red-700 text-white border-red-700 
-                     hover:bg-red-800 hover:text-white shadow-md transition-all"
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          Logout
-        </Button>
+        <p className="text-black-100 text-center text-xs">
+          GCEF v2.0.0
+        </p>
       </div>
     </div>
   );
