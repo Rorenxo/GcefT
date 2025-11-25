@@ -18,7 +18,8 @@ import { getAuth } from "firebase/auth"
 import { db } from "@/lib/firebase"
 import type { Event, EventFormData } from "@/types"
 
-export function useEvents() {
+export function useEvents(options: { scope?: "all" | "user" } = {}) {
+  const { scope = "user" } = options
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -27,25 +28,28 @@ export function useEvents() {
     const auth = getAuth()
     const user = auth.currentUser
 
-    if (!user) {
-      setLoading(false)
-      setError("User not authenticated")
-      return
-    }
-
     const fetchEvents = async () => {
       try {
-        const adminDoc = await getDoc(doc(db, "admins", user.uid))
         let q
 
-        if (adminDoc.exists()) {
+        if (scope === "all") {
           q = query(collection(db, "events"), orderBy("startDate", "desc"))
         } else {
-          q = query(
-            collection(db, "events"),
-            where("createdBy", "==", user.uid),
-            orderBy("startDate", "desc")
-          )
+          if (!user) {
+            setLoading(false)
+            setError("User not authenticated for this scope.")
+            return
+          }
+          const adminDoc = await getDoc(doc(db, "admins", user.uid))
+          if (adminDoc.exists()) {
+            q = query(collection(db, "events"), orderBy("startDate", "desc"))
+          } else {
+            q = query(
+              collection(db, "events"),
+              where("createdBy", "==", user.uid),
+              orderBy("startDate", "desc")
+            )
+          }
         }
 
         const unsubscribe = onSnapshot(
@@ -79,15 +83,29 @@ export function useEvents() {
     }
 
     fetchEvents()
-  }, [])
+  }, [scope])
 
-  const addEvent = async (eventData: EventFormData, imageUrl?: string) => {
+  const addEvent = async (eventData: EventFormData, imageUrls?: string[]) => {
     try {
       const auth = getAuth()
       const user = auth.currentUser
       if (!user) throw new Error("User not authenticated")
 
       const now = Timestamp.now()
+
+      // Get organizer info if available
+      let organizerName: string | undefined
+      let organizerEmail: string | undefined
+      try {
+        const orgDocRef = doc(db, "organizers", user.uid)
+        const orgDocSnap = await getDoc(orgDocRef)
+        if (orgDocSnap.exists()) {
+          organizerName = orgDocSnap.data().organizerName
+          organizerEmail = orgDocSnap.data().email
+        }
+      } catch {
+        // If not an organizer, that's okay
+      }
 
       await addDoc(collection(db, "events"), {
         eventName: eventData.eventName,
@@ -97,7 +115,15 @@ export function useEvents() {
         location: eventData.location,
         professor: eventData.professor,
         department: eventData.department,
-        imageUrl: imageUrl || null,
+        eventType: eventData.eventType || "Conference",
+        eventTypeCustom: eventData.eventTypeCustom || null,
+        speakers: eventData.speakers || [],
+        maxParticipants: eventData.maxParticipants || null,
+        registrationLinks: eventData.registrationLinks || [],
+        attendanceInfo: eventData.attendanceInfo || { persons: [], locations: [] },
+        imageUrls: imageUrls || [],
+        organizerName: organizerName || null,
+        organizerEmail: organizerEmail || null,
         createdBy: user.uid,
         createdAt: now,
         updatedAt: now,
@@ -107,7 +133,7 @@ export function useEvents() {
     }
   }
 
-  const updateEvent = async (id: string, eventData: Partial<EventFormData>, imageUrl?: string) => {
+  const updateEvent = async (id: string, eventData: Partial<EventFormData>, imageUrls?: string[]) => {
     try {
       const eventRef = doc(db, "events", id)
       const updateData: any = {
@@ -121,8 +147,26 @@ export function useEvents() {
       if (eventData.endDate) {
         updateData.endDate = Timestamp.fromDate(new Date(eventData.endDate))
       }
-      if (imageUrl !== undefined) {
-        updateData.imageUrl = imageUrl
+      if (imageUrls !== undefined) {
+        updateData.imageUrls = imageUrls
+      }
+      if (eventData.eventType !== undefined) {
+        updateData.eventType = eventData.eventType
+      }
+      if (eventData.eventTypeCustom !== undefined) {
+        updateData.eventTypeCustom = eventData.eventTypeCustom
+      }
+      if (eventData.speakers !== undefined) {
+        updateData.speakers = eventData.speakers
+      }
+      if (eventData.maxParticipants !== undefined) {
+        updateData.maxParticipants = eventData.maxParticipants
+      }
+      if (eventData.registrationLinks !== undefined) {
+        updateData.registrationLinks = eventData.registrationLinks
+      }
+      if (eventData.attendanceInfo !== undefined) {
+        updateData.attendanceInfo = eventData.attendanceInfo
       }
 
       await updateDoc(eventRef, updateData)

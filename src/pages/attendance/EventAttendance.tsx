@@ -22,8 +22,6 @@ export default function EventAttendance() {
 
   useEffect(() => {
     if (!eventId) return;
-
-    // Fetch event name
     const fetchEventName = async () => {
       try {
         const eventSnap = await getDoc(doc(db, "events", eventId));

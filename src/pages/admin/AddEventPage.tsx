@@ -15,13 +15,23 @@ export default function AddEventPage() {
   const handleSubmit = async (data: EventFormData) => {
     setIsLoading(true)
     try {
-      let imageUrl: string | undefined
-
-      if (data.image instanceof File) {
-        imageUrl = await uploadImage(data.image, { folder: "events", maxSizeMB: 5 })
+      // Upload multiple images if provided
+      let imageUrls: string[] = []
+      if (Array.isArray(data.images) && data.images.length > 0) {
+        const files = data.images.filter((f) => f instanceof File) as File[]
+        if (files.length > 0) {
+          const uploaded = await Promise.all(
+            files.map((file) => uploadImage(file, { folder: "events", maxSizeMB: 5 }))
+          )
+          imageUrls = uploaded
+        }
+      } else if (data.image instanceof File) {
+        // fallback to single image
+        const url = await uploadImage(data.image, { folder: "events", maxSizeMB: 5 })
+        imageUrls = [url]
       }
-//@ts-ignore
-      await addEvent(data, imageUrl)
+
+      await addEvent(data, imageUrls)
 
       // SUCCESS: remain on the same page and show confirmation.
       // Avoid navigating to a public route which may trigger ProtectedRoute -> landing redirect.

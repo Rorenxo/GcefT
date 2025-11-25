@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { createPortal } from "react-dom"
-import { Search, Bell, ChevronLeft, ChevronRight, ArrowRight, Pencil, BarChart, Users, Trash2, Calendar, MapPin } from "lucide-react"
+import { Search, Bell, ChevronLeft, ChevronRight, ArrowRight, Pencil, BarChart, Users, Trash2, Calendar, MapPin, User, LogOut, Settings, UserCircle } from "lucide-react"
 import { collection, query, where, onSnapshot, deleteDoc, doc, getDoc } from "firebase/firestore"
 import { ref as storageRef, deleteObject } from "firebase/storage"
 import { db, auth, storage } from "@/lib/firebase" 
@@ -47,6 +47,7 @@ const getGreeting = () => {
 export default function Home() {
   const [events, setEvents] = useState<Event[]>([])
   const [search, setSearch] = useState("")
+  const [organizerName, setOrganizerName] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -61,6 +62,7 @@ export default function Home() {
     }
   })
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isProfileOpen, setProfileOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState<number>(() => {
     try {
       const saved = localStorage.getItem("organizerUnreadCount")
@@ -72,13 +74,17 @@ export default function Home() {
   })
   const { user } = useAuth()
   const isInitialLoad = useRef(true)
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const notificationDropdownRef = useRef<HTMLDivElement>(null)
+  const profileDropdownRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
 
   const handleOutsideClick = useCallback(
     (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target as Node)) {
         setIsModalOpen(false)
+      }
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setProfileOpen(false)
       }
     },
     [setIsModalOpen]
@@ -87,8 +93,12 @@ export default function Home() {
   useEffect(() => {
     if (isModalOpen) {
       document.addEventListener("mousedown", handleOutsideClick)
+    } else {
+      document.removeEventListener("mousedown", handleOutsideClick)
     }
-    return () => document.removeEventListener("mousedown", handleOutsideClick)
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick)
+    }
   }, [isModalOpen, handleOutsideClick])
 
   useEffect(() => {
@@ -108,6 +118,7 @@ export default function Home() {
       const orgDocSnap = await getDoc(orgDocRef)
       if (orgDocSnap.exists()) {
         userRole = orgDocSnap.data().role || "organizer"
+        setOrganizerName(orgDocSnap.data().organizerName || null)
       }
 
       // 2️⃣ Optional: Check if user is an admin
@@ -147,7 +158,9 @@ export default function Home() {
             location: data.location || "Unknown Location",
             professor: data.professor || "N/A",
             description: data.description || "No description provided.",
-            imageUrl: data.imageUrl || (Array.isArray(data.imageUrls) ? data.imageUrls[0] : "/placeholder.jpg"),
+            imageUrl: Array.isArray(data.imageUrls) && data.imageUrls.length > 0
+              ? data.imageUrls[0]
+              : data.imageUrl || "/placeholder.jpg",
           }
         })
         setEvents(fetchedEvents)
@@ -276,7 +289,7 @@ export default function Home() {
         />
       </div>
       {/* Notifications Button */}
-      <div className="relative" ref={dropdownRef}>
+      <div className="relative" ref={notificationDropdownRef}>
         <button
           onClick={() => {
             setIsModalOpen((prev) => !prev)
@@ -296,16 +309,56 @@ export default function Home() {
           </div>
         )}
       </div>
+      {/* Profile Button */}
+      <div className="relative" ref={profileDropdownRef}>
+        <button onClick={() => setProfileOpen((prev) => !prev)} className="relative bg-white rounded-lg p-2.5 border border-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
+          <User className="h-5 w-5 text-gray-600" />
+        </button>
+        {isProfileOpen && (
+          <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border-gray-200 z-50 overflow-hidden">
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <User className="w-5 h-5 text-green-700" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-gray-900 truncate">{organizerName || user?.displayName || "Organizer"}</p>
+                  <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-2">
+              <Link to="/organizer/profile" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                <UserCircle className="h-4 w-4" />
+                My Profile
+              </Link>
+              <Link to="#" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                <Settings className="h-4 w-4" />
+                Settings
+              </Link>
+            </div>
+            <div className="p-2 border-t border-gray-200">
+              <button
+                onClick={() => auth.signOut().then(() => navigate("/organizer-login"))}
+                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 
 
   const [portalContainer, setPortalContainer] = useState<Element | null>(null)
 
+ 
   useEffect(() => {      const container = document.getElementById("mobile-header-actions")
     if (container) {
-      setPortalContainer(container)
-    }
+      setPortalContainer(container)   }
   }, [])
 
   const handleDeleteEvent = async (eventId: string, imageUrl?: string) => {
@@ -343,7 +396,7 @@ export default function Home() {
             <div className="relative overflow-hidden rounded-2xl border border-gray-200 shadow-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-8 mb-8 flex flex-col md:flex-row items-center justify-between">
               <div className="z-10 flex flex-col items-center text-center md:ml-24">
                 <h2 className="text-2xl sm:text-3xl font-bold text-black">
-                  {getGreeting()}, {user?.displayName ? user.displayName : "Organizer"}!
+                  {getGreeting()}, {organizerName || (user?.displayName ? user.displayName : "Organizer")}!
                 </h2>
                 <p className="text-black text-sm sm:text-base mt-2">
                   How's your event planning today?
@@ -461,7 +514,7 @@ export default function Home() {
               </div>
 
               {/* Notifications Button */}
-              <div className="relative" ref={dropdownRef}>
+              <div className="relative" ref={notificationDropdownRef}>
                 <button
                   onClick={() => {
                     setIsModalOpen((prev) => !prev)
@@ -502,6 +555,44 @@ export default function Home() {
                       ) : (
                         <div className="p-4 text-center text-sm text-gray-500">No new notifications.</div>
                       )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Profile Button */}
+              <div className="relative" ref={profileDropdownRef}>
+                <button onClick={() => setProfileOpen((prev) => !prev)} className="relative bg-white rounded-2xl p-3 border border-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
+                  <User className="h-6 w-6 text-gray-600" />
+                </button>
+                {isProfileOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border-gray-200 z-50 overflow-hidden">
+                    <div className="p-4 border-b border-gray-200">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                          <User className="w-5 h-5 text-green-700" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm text-gray-900 truncate">{organizerName || user?.displayName || "Organizer"}</p>
+                          <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-2">
+                      <Link to="/organizer/profile" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                        <UserCircle className="h-4 w-4" />
+                        My Profile
+                      </Link>
+                      <Link to="#" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                        <Settings className="h-4 w-4" />
+                        Settings
+                      </Link>
+                    </div>
+                    <div className="p-2 border-t border-gray-200">
+                      <button onClick={() => auth.signOut().then(() => navigate("/organizer-login"))} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors">
+                        <LogOut className="h-4 w-4" />
+                        Logout
+                      </button>
                     </div>
                   </div>
                 )}

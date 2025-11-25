@@ -27,6 +27,7 @@ import EventDetails from "@/pages/organizer/EventDetails"
 import StatisticsPage from "@/pages/organizer/orgstats"
 import OrgEventPage from "@/pages/organizer/addEvent"
 import EditEventPage from "@/pages/organizer/EditEventPage"
+import OrganizerProfile from "@/pages/organizer/OrganizerProfile"
 
 // ---------- STUDENT ----------
 import StudentLayout from "@/shared/components/layout/studentLayout/studentLayout"
@@ -38,6 +39,8 @@ import StudentMessages from "@/pages/student/StudentMEssages"
 import StudentSettings from "@/pages/student/StudentSettings"
 import StudentProfilePage from "@/pages/student/StudentProfilePage"
 import StudentAttendancePage from "@/pages/student/StudentAttendance"
+import SavedEventsPage from "@/pages/student/SavedEvents"
+
 
 function App() {
   return (
@@ -81,15 +84,10 @@ function App() {
           <Route path="add-event" element={<OrgEventPage />} />
           <Route path="statistics" element={<StatisticsPage />} />
           <Route path="edit-event/:eventId" element={<EditEventPage />} />
-
-          {/* Event Details */}
           <Route path=":organizerId/events/:eventId" element={<EventDetails />} />
-
-          {/* Event Attendance (NOW INSIDE /organizer PROTECTED ROUTE) */}
           <Route path="attendance/:eventId" element={<EventAttendance />} />
-
-          {/* QR Scanner */}
           <Route path="scan/:eventId" element={<AttendanceScanner />} />
+          <Route path="profile" element={<OrganizerProfile />} />
         </Route>
 
         {/* ---------- STUDENT ROUTES ---------- */}
@@ -109,6 +107,7 @@ function App() {
           <Route path="settings" element={<StudentSettings />} />
           <Route path="profile" element={<StudentProfilePage />} />
           <Route path="attendance" element={<StudentAttendancePage />} />
+          <Route path="saved" element={<SavedEventsPage />} />
         </Route>
 
         {/* ---------- CATCH ALL ---------- */}

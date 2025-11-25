@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, Bell, User, Settings, LogOut, Search } from "lucide-react";
 import StudentSidebar from "@/shared/components/layout/studentLayout/StudentSidebar";
 import { auth } from "@/lib/firebase";
+import useAuth from "@/shared/components/useStudentAuth";
 
 export default function StudentLayout() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -15,6 +16,7 @@ export default function StudentLayout() {
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   const handleLogout = async () => {
     await auth.signOut();
@@ -68,8 +70,7 @@ export default function StudentLayout() {
 
       {/* Main content area */}
       <main className="flex-1 overflow-y-auto">
-        {/* Header for both mobile and desktop */}
-        <div className="bg-white px-4 md:px-8 py-4 shadow-lg sticky top-0 z-40 ">
+        <div className="bg-white px-4 md:px-8 py-4 shadow-lg sticky top-0 z-30 ">
           <div className="flex items-center gap-4 w-full">
             <button onClick={() => setSidebarOpen(true)} className="lg:hidden" aria-label="Open sidebar">
               <Menu className="h-6 w-6 text-gray-500" />
@@ -94,9 +95,15 @@ export default function StudentLayout() {
               <div className="relative" ref={profileDropdownRef}>
                 <button 
                   onClick={() => setShowProfileDropdown(prev => !prev)}
-                  className="p-1.5 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors ring-1 ring-blue-500"
+                  className="h-9 w-9 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors ring-1 ring-blue-500 flex items-center justify-center overflow-hidden"
                 >
-                  <User className="h-5 w-5 text-green-800" />
+                  {user?.photoURL ? (
+                    <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="font-bold text-green-800">
+                      {user?.displayName ? user.displayName[0].toUpperCase() : <User className="h-5 w-5" />}
+                    </span>
+                  )}
                 </button>
                 <AnimatePresence>
                   {showProfileDropdown && (

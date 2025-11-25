@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { collectionGroup, query, where, getDocs, doc, getDoc } from "firebase/firestore"
+import { collectionGroup, query, where, getDocs, doc, getDoc, collection } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
-import { ArrowLeft, Calendar, CheckCircle, UserCheck } from "lucide-react"
+import { ArrowLeft, CheckCircle, UserCheck } from "lucide-react"
 import { format } from "date-fns"
 
 interface AttendanceRecord {
@@ -32,23 +32,31 @@ export default function StudentAttendancePage() {
       }
 
       try {
-        // 1. Get the student's studentNumber from their profile
-        const studentDocRef = doc(db, "students", user.uid)
-        const studentDocSnap = await getDoc(studentDocRef)
+        // 1. Get the student's profile to find their studentNumber
+        const studentDocRef = doc(db, "students", user.uid);
+        const studentDocSnap = await getDoc(studentDocRef);
 
         if (!studentDocSnap.exists()) {
-          console.log("Student profile not found.")
-          setLoading(false)
-          return
+          console.error("Student profile not found!");
+          setLoading(false);
+          return;
         }
-        const studentNumber = studentDocSnap.data().studentNumber
 
-        // 2. Use a collectionGroup query to find all attendance records for that studentNumber
+        const studentData = studentDocSnap.data();
+        const studentNumber = studentData.studentNumber;
+
+        if (!studentNumber) {
+          console.error("Student number not found in profile!");
+          setLoading(false);
+          return;
+        }
+
         const attendanceQuery = query(
           collectionGroup(db, "attendance"),
           where("studentNumber", "==", studentNumber)
         )
         const querySnapshot = await getDocs(attendanceQuery)
+        console.info("Attendance query returned docs:", querySnapshot.size, "for studentNumber:", studentNumber)
 
         const records: AttendanceRecord[] = await Promise.all(
           querySnapshot.docs.map(async (docSnap) => {
