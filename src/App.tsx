@@ -18,6 +18,7 @@ import ApprovedOrganizersHistoryPage from "@/pages/admin/ApproveHistory"
 import AddEventPage from "@/pages/admin/AddEventPage"
 import AnalyticsPage from "@/pages/admin/Analytics"
 import AdminEditEventPage from "@/pages/admin/EditEventPage"
+import AdminProfilePage from "@/pages/admin/AdminProfilePage"
 import AdminLayout from "@/shared/components/layout/adminlayout/Layout"
 
 // ---------- ORGANIZER ----------
@@ -75,6 +76,7 @@ function App() {
           <Route path="events" element={<EventsPage />} />
           <Route path="add-event" element={<AddEventPage />} />
           <Route path="edit-event/:eventId" element={<AdminEditEventPage />} />
+          <Route path="profile" element={<AdminProfilePage />} />
         </Route>
 
         {/* ---------- ORGANIZER ROUTES ---------- */}

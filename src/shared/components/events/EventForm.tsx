@@ -382,11 +382,15 @@ export default function EventForm({ onSubmit, initialData, isLoading }: EventFor
               <Select value={formData.eventType || "Conference"} onValueChange={(value) => setFormData({ ...formData, eventType: value as any })}>
                 <SelectTrigger className="border-zinc-300 bg-zinc-50 text-zinc-900"><SelectValue placeholder="Select Event Type" /></SelectTrigger>
                 <SelectContent position="popper" side="bottom" className="border-zinc-200 bg-white">
-                  <SelectItem value="Conference">Conference</SelectItem>
                   <SelectItem value="Seminar">Seminar</SelectItem>
+                  <SelectItem value="Activities">Activities</SelectItem>
+                  <SelectItem value="Exhibition">Exhibition</SelectItem>
+                  <SelectItem value="Sports">Sports</SelectItem>
+                  <SelectItem value="Educational">Educational</SelectItem>
                   <SelectItem value="Workshop">Workshop</SelectItem>
-                  <SelectItem value="Lecture">Lecture</SelectItem>
-                  <SelectItem value="Networking">Networking</SelectItem>
+                  <SelectItem value="Social">Social</SelectItem>
+                  <SelectItem value="Community">Community</SelectItem>
+                  <SelectItem value="Conference">Conference</SelectItem>
                   <SelectItem value="Hackathon">Hackathon</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
@@ -593,7 +597,7 @@ export default function EventForm({ onSubmit, initialData, isLoading }: EventFor
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}

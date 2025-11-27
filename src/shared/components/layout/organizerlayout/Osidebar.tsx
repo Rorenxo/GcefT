@@ -26,19 +26,19 @@
 
     return (
         <div
-        className="flex h-screen w-60 flex-col rounded-tr-xl rounded-br-xl
+        className="flex h-screen w-60 flex-col rounded-br-xl
                  bg-[#7cb93c]/95
                  shadow-lg"
         >
-        <div className="flex items-center gap-3 px-6 py-4 border-b border-green-900/50">
+        <div className="flex items-center gap-3 px-6 py-4 ">
             <img
             src={gcef1}
             alt="GCEF Logo"
-            className="h-12 w-12 object-contain rounded-full bg-white p-1"
+            className="h-14 w-14 object-contain rounded-full bg-white p-1"
             />
             <div>
-            <h1 className="text-lg font-bold text-white leading-tight">Organizer</h1>
-            <p className="text-xs text-zinc-300">Event Management</p>
+            <h1 className="text-lg font-bold text-white">Organizer</h1>
+            <p className="text-xs text-black">Event Management</p>
             </div>
         </div>
 

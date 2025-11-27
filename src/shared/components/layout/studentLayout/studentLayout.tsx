@@ -71,24 +71,23 @@ export default function StudentLayout() {
 
       {/* Main content area */}
       <main className="flex-1 overflow-y-auto">
-        <div className="bg-white px-4 md:px-8 py-4 shadow-lg sticky top-0 z-30 ">
+        <div className="bg-white px-4 md:px-8 py-3 shadow-lg sticky top-0 z-30 ">
           <div className="flex items-center gap-4 w-full">
             <button onClick={() => setSidebarOpen(true)} className="lg:hidden" aria-label="Open sidebar">
               <Menu className="h-6 w-6 text-gray-500" />
             </button>
             <div className="flex-1 hidden lg:block">
-              {/* This space can be used for a logo or title if needed in the future */}
             </div>
             <div className="flex items-center gap-4 ml-auto">
               {location.pathname === '/student' && (
                 <div className="relative flex items-center w-40 sm:w-64">
-                  <Search className="absolute left-3 h-4 w-4 text-muted-foreground pointer-events-none" />
+                  <Search className="absolute left-3 h-4 w-4 text-gray-400 pointer-events-none" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search events..."
-                    className="w-full pl-10 pr-4 py-2 rounded-lg bg-muted/40 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-300 text-sm h-9"
+                    placeholder="Search..."
+                    className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-100 border border-gray-200 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-300 text-sm h-9"
                   />
                 </div>
               )}
@@ -96,7 +95,7 @@ export default function StudentLayout() {
               <div className="relative" ref={profileDropdownRef}>
                 <button 
                   onClick={() => setShowProfileDropdown(prev => !prev)}
-                  className="h-9 w-9 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors ring-1 ring-blue-500 flex items-center justify-center overflow-hidden"
+                  className="h-9 w-9 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors ring-1 ring-green-500 flex items-center justify-center overflow-hidden"
                 >
                   {user?.photoURL ? (
                     <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />

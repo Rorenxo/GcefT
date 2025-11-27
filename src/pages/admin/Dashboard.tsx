@@ -7,8 +7,8 @@ import { collection, query, where, onSnapshot, Timestamp } from "firebase/firest
 import { db } from "@/lib/firebase"
 import { useNotification } from "@/shared/context/NotificationContext"
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts"
-import { Button } from "@/shared/components/ui/button" 
-import { AlertTriangle, Clock, CalendarCheck, CalendarPlus, ArrowRight, Utensils, MapPin, Edit, Trash2, CalendarX, X as XIcon } from "lucide-react"
+import { Button } from "@/shared/components/ui/button"
+import { AlertTriangle, Clock, CalendarCheck, CalendarPlus, ArrowRight, Edit, Trash2 } from "lucide-react"
 import { isSameDay, isThisMonth, isWithinInterval, startOfToday, endOfToday, addDays } from "date-fns"
 import { doc, getDoc, deleteDoc, updateDoc } from "firebase/firestore"
 
@@ -71,7 +71,6 @@ export default function Dashboard() {
   const [departmentTrendData, setDepartmentTrendData] = useState<{ name: string; count: number }[]>([])
   const [timeFilter, setTimeFilter] = useState<"month" | "30days">("month")
   const [deleteConfirmEvent, setDeleteConfirmEvent] = useState<Event | null>(null)
-  const [cancelConfirmEvent, setCancelConfirmEvent] = useState<Event | null>(null)
   const navigate = useNavigate()
   const { addNotification } = useNotification()
   const DEPARTMENT_COLORS: Record<string, string> = {
@@ -97,7 +96,7 @@ export default function Dashboard() {
       let monthCount = 0
       let weekCount = 0
       const weeklyEventsList: Event[] = []
-      const statusCounts: Record<string, number> = { Approved: 0, Draft: 0, Canceled: 0 }
+      const statusCounts: Record<string, number> = { Approved: 0, Draft: 0 }
       const deptCounts: Record<string, number> = { CCS: 0, CEAS: 0, CAHS: 0, CHTM: 0, CBA: 0, ALL: 0 }
       const deptCounts30Days: Record<string, number> = { CCS: 0, CEAS: 0, CAHS: 0, CHTM: 0, CBA: 0, ALL: 0 }
 
@@ -215,18 +214,6 @@ export default function Dashboard() {
     }
   };
 
-  const handleCancelEvent = async () => {
-    if (!cancelConfirmEvent) return;
-    try {
-      await updateDoc(doc(db, "events", cancelConfirmEvent.id), { status: "Canceled" });
-      addNotification("Event has been canceled", "info");
-    } catch (error) {
-      console.error("Error canceling event:", error);
-      addNotification("Failed to cancel event", "error");
-    } finally {
-      setCancelConfirmEvent(null);
-    }
-  };
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -259,7 +246,7 @@ export default function Dashboard() {
           loading={loading}
         />
         <StatCard
-          title="Upcoming Check-ins"
+          title="Upcoming Events  "
           value={todayEventsCount}
           label={`Events Starting Today (${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})`}
           icon={<Clock className="h-6 w-6 text-white" />}
@@ -325,7 +312,7 @@ export default function Dashboard() {
                     {eventStatusData.map((entry, index) => {
                       const colors: Record<string, string> = {
                         'Approved': '#22c55e', 'Pending': '#f97316',
-                        'Draft': '#64748b', 'Canceled': '#ef4444'
+                        'Draft': '#64748b'
                       };
                       return <Cell key={`cell-${index}`} fill={colors[entry.name] || '#ccc'} />;
                     })}
@@ -427,10 +414,7 @@ export default function Dashboard() {
                         <Button onClick={() => navigate(`/admin/edit-event/${event.id}`)} variant="ghost" size="icon" className="text-blue-600 hover:bg-blue-100 hover:text-blue-700">
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button onClick={() => setCancelConfirmEvent(event)} variant="ghost" size="icon" className="text-yellow-600 hover:bg-yellow-100 hover:text-yellow-700">
-                          <CalendarX className="h-4 w-4" />
-                        </Button>
-                        <Button onClick={() => setDeleteConfirmEvent(event)} variant="ghost" size="icon" className="text-red-600 hover:bg-red-100 hover:text-red-700">
+                        <Button onClick={() => setDeleteConfirmEvent(event)} variant="ghost" size="icon" className="text-red-600 hover:bg-red-600 hover:text-white">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -451,22 +435,15 @@ export default function Dashboard() {
               <h3 className="text-lg font-bold text-gray-900">Confirm Deletion</h3>
               <p className="text-sm text-gray-600 mt-2">Are you sure you want to delete the event "{deleteConfirmEvent.eventName}"? This action cannot be undone.</p>
               <div className="mt-6 flex justify-end gap-3">
-                <Button variant="ghost" onClick={() => setDeleteConfirmEvent(null)}>Cancel</Button>
-                <Button variant="destructive" onClick={handleDeleteEvent}>Delete</Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {cancelConfirmEvent && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 z-[1000] flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
-              <h3 className="text-lg font-bold text-gray-900">Confirm Cancellation</h3>
-              <p className="text-sm text-gray-600 mt-2">Are you sure you want to cancel the event "{cancelConfirmEvent.eventName}"? This will mark the event as canceled.</p>
-              <div className="mt-6 flex justify-end gap-3">
-                <Button variant="ghost" onClick={() => setCancelConfirmEvent(null)}>Back</Button>
-                <Button className="bg-yellow-500 hover:bg-yellow-600 text-white" onClick={handleCancelEvent}>Confirm Cancel</Button>
+                <Button variant="ghost" onClick={() => setDeleteConfirmEvent(null)} className="hover:bg-gray-200">Cancel</Button>
+                <Button
+                  onClick={() => {
+                    if (deleteConfirmEvent) {
+                      handleDeleteEvent()
+                    }
+                  }}
+                  className="bg-red-600 text-white hover:bg-red-700"
+                >Delete</Button>
               </div>
             </motion.div>
           </motion.div>

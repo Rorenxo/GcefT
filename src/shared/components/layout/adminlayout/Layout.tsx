@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 import { Outlet, Link, useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import { Menu, Search, User, LogOut } from "lucide-react"
+import { Menu, Search, User, LogOut, Settings } from "lucide-react"
 import Sidebar from "./Sidebar"
 import { NotificationCenter } from "@/shared/components/NotificationCenter"
 import { useAuth } from "@/hooks/useAuth"
@@ -96,9 +96,13 @@ export default function Layout() {
                   onClick={() => setShowProfileDropdown((prev) => !prev)}
                   className="h-9 w-9 rounded-full bg-green-100 hover:bg-green-200 transition-colors ring-1 ring-green-500 flex items-center justify-center overflow-hidden"
                 >
-                  <span className="font-bold text-green-800">
-                    {user?.email ? user.email[0].toUpperCase() : <User className="h-5 w-5" />}
-                  </span>
+                  {user?.photoURL ? (
+                    <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="font-bold text-green-800">
+                      {user?.email ? user.email[0].toUpperCase() : <User className="h-5 w-5" />}
+                    </span>
+                  )}
                 </button>
                 <AnimatePresence>
                   {showProfileDropdown && (
@@ -113,6 +117,9 @@ export default function Layout() {
                         <p className="text-xs text-gray-500 truncate">{user?.email}</p>
                       </div>
                       <div className="p-2">
+                        <Link to="/admin/profile" onClick={() => setShowProfileDropdown(false)} className="flex items-center gap-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                          <User className="h-4 w-4" /> My Profile
+                        </Link>
                         <button onClick={() => {
                             setShowProfileDropdown(false);
                             setIsLogoutConfirmOpen(true);

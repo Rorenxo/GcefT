@@ -15,7 +15,6 @@ export default function AddEventPage() {
   const handleSubmit = async (data: EventFormData) => {
     setIsLoading(true)
     try {
-      // Upload multiple images if provided
       let imageUrls: string[] = []
       if (Array.isArray(data.images) && data.images.length > 0) {
         const files = data.images.filter((f) => f instanceof File) as File[]
@@ -26,18 +25,12 @@ export default function AddEventPage() {
           imageUrls = uploaded
         }
       } else if (data.image instanceof File) {
-        // fallback to single image
         const url = await uploadImage(data.image, { folder: "events", maxSizeMB: 5 })
         imageUrls = [url]
       }
 
       await addEvent(data, imageUrls)
-
-      // SUCCESS: remain on the same page and show confirmation.
-      // Avoid navigating to a public route which may trigger ProtectedRoute -> landing redirect.
       alert("Event created successfully. You will remain on this page.")
-      // If you prefer to go to admin events list use the admin route:
-      // navigate("/admin/events")
     } catch (error: any) {
       console.error("Failed to add event:", error)
       alert(error.message || "Failed to add event. Please try again.")

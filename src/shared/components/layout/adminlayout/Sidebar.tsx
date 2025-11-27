@@ -1,7 +1,7 @@
 "use client"
 
   import { NavLink } from "react-router-dom"
-  import { Calendar, CalendarPlus, LayoutDashboard, List, Plus, UserCheck, ChartNoAxesCombined } from "lucide-react" 
+  import { Calendar, CalendarPlus, LayoutDashboard, List, UserCheck, ChartNoAxesCombined, Settings } from "lucide-react" 
   import { useAuth } from "@/hooks/useAuth"
   import { Button } from "@/shared/components/ui/button"
   import { cn } from "@/lib/utils"
@@ -38,7 +38,7 @@
           />
           <div>
             <h1 className="text-lg font-bold text-white">Admin</h1>
-            <p className="text-xs text-white">Campus Feed</p>
+            <p className="text-xs text-black">Administrator</p>
           </div>
         </div>
 

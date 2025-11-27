@@ -24,6 +24,7 @@
     saves?: string[]
     category?: 'School Event' | 'Seminar' | 'Activity' | 'Social';
     organizerName?: string
+    status?: string;
     organizerEmail?: string
     organizerPhotoURL?: string;
     eventType?: string
@@ -119,7 +120,6 @@
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
-          // Handle click outside if needed
         }
       };
       document.addEventListener("mousedown", handleClickOutside);
@@ -233,14 +233,30 @@
       )
     }
 
+    // Helper function to get category from eventType
+    const getCategoryFromEventType = (eventType?: string): string => {
+      if (!eventType) return 'All';
+      
+      const activitiesTypes = ['Activities', 'Exhibition', 'Sports', 'Educational', 'Workshop'];
+      const socialTypes = ['Social', 'Community'];
+      
+      if (activitiesTypes.includes(eventType)) return 'Activity';
+      if (socialTypes.includes(eventType)) return 'Social';
+      if (eventType === 'Seminar') return 'Seminar';
+      return 'All';
+    };
+
     const searchFilteredEvents = events.filter((event) => {
         const searchMatch =
             event.eventName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             event.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
-        const categoryMatch = activeFilter === 'All' || event.category === activeFilter;
+        // Get category from eventType field
+        const eventCategory = getCategoryFromEventType(event.eventType);
+        const categoryMatch = activeFilter === 'All' || eventCategory === activeFilter;
+        const notCancelled = event.status !== "Canceled";
 
-        return searchMatch && categoryMatch;
+        return searchMatch && categoryMatch && notCancelled;
     }
     )
 
@@ -290,7 +306,6 @@
                   </button>
                 </div>
               </div>
-              {/* Slider Dots */}
               <div className="flex justify-center gap-2 mt-4">
                 {featuredEventsData.map((_, index) => (
                   <button
@@ -304,8 +319,6 @@
                 ))}
               </div>
             </div>
-
-            {/* Category Filters */}
             <div className="px-4 md:px-8 py-6">
               <div className="flex overflow-x-auto sm:grid sm:grid-cols-4 gap-4 md:gap-6 pb-2 -mb-2 ">
                 <FilterCard
@@ -371,8 +384,6 @@
                       </div>
                     </div>
                   )}
-
-                  {/* Upcoming Events */}
                   {upcomingEvents.length > 0 && (
                     <div>
                       <div className="flex items-center gap-3 mb-6">
@@ -395,8 +406,6 @@
                       </div>
                     </div>
                   )}
-
-                  {/* Today's Events */}
                   {todaysEvents.length > 0 && (
                     <div>
                       <div className="flex items-center gap-3 mb-6">
@@ -419,8 +428,6 @@
                       </div>
                     </div>
                   )}
-
-                  {/* Further Ahead Events */}
                   {furtherAheadEvents.length > 0 && (
                     <div>
                       <div className="flex items-center gap-3 mb-6">
@@ -599,10 +606,9 @@
           onClick={() => onCommentClick(event)}
           className="group relative rounded-2xl overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer flex flex-col"
         >
-          {/* Header with Organizer Info and Menu */}
+
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
-              {/* Avatar */}
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center overflow-hidden flex-shrink-0 ring-2 ring-white">
                 {event.organizerPhotoURL ? (
                   <img src={event.organizerPhotoURL} alt={event.organizerName || 'Organizer'} className="w-full h-full object-cover" />
@@ -615,7 +621,6 @@
                 <p className="text-xs text-gray-500">{event.organizerEmail || "organizer@email.com"}</p>
               </div>
             </div>
-            {/* More button */}
             <button className="text-gray-400 hover:text-gray-600 p-1">
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                 <circle cx="12" cy="5" r="2" />
@@ -625,17 +630,13 @@
             </button>
           </div>
 
-          {/* Image Grid - 1 Large on Left, 3 Small on Right */}
           <div className="px-4 pb-3">
             <div className="relative w-full h-56 rounded-lg overflow-hidden grid grid-cols-3 gap-1">
-              {/* Large image on left (spans 2 rows) */}
               {images[0] && (
                 <div className="col-span-1 row-span-2 relative overflow-hidden rounded-lg">
                   <img src={images[0]} alt="Event main" className="w-full h-full object-cover" />
                 </div>
               )}
-              
-              {/* 3 small images on right */}
               {images[1] && (
                 <div className="col-span-1 relative overflow-hidden rounded-lg">
                   <img src={images[1]} alt="Event 2" className="w-full h-full object-cover" />
@@ -651,8 +652,6 @@
                   <img src={images[3]} alt="Event 4" className="w-full h-full object-cover" />
                 </div>
               )}
-
-              {/* Placeholder if not enough images */}
               {images.length === 0 && <div className="col-span-3 bg-gray-200 rounded-lg"></div>}
             </div>
           </div>
@@ -1172,10 +1171,7 @@
                 </div>
               </div>
             </div>
-
-            {/* Action Bar */}
             <div className="p-4 bg-white border-t border-gray-200 flex-shrink-0 space-y-2">
-              {/* Engagement Stats */}
               <div className="flex items-center gap-2 pb-2">
                 <button
                   onClick={() => onLike(event.id)}
@@ -1191,8 +1187,6 @@
                   <span className="font-semibold text-xs">{hearts.length}</span>
                 </button>
               </div>
-
-              {/* Comment Input */}
               <form
                 onSubmit={(e) => {
                   e.preventDefault()
