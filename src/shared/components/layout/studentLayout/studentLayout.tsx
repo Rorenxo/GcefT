@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Outlet, Link, useNavigate, useLocation, useOutletContext } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, User, Settings, LogOut, Search, ChevronDown, Users } from "lucide-react";
+import { Menu, User, ListFilter, Settings, LogOut, Search, ChevronDown, Users } from "lucide-react";
 import StudentSidebar from "@/shared/components/layout/studentLayout/StudentSidebar";
 import { NotificationCenter } from "@/shared/components/NotificationCenter";
 import { auth } from "@/lib/firebase";
@@ -112,11 +112,11 @@ export default function StudentLayout() {
                     <button 
                       onClick={() => setDeptDropdownOpen(prev => !prev)}
                       className="flex items-center justify-center h-9 w-9 rounded-lg bg-gray-100 border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors
-                                 sm:w-auto sm:px-3 sm:justify-between sm:gap-2"
+                                sm:w-auto sm:px-3 sm:justify-between sm:gap-2"
                     >
                       {/* Mobile view: Icon only */}
                       <span className="sm:hidden">
-                        <Users className="h-4 w-4 text-gray-500" />
+                        <ListFilter className="h-4 w-4 text-gray-500" />
                       </span>
                       {/* Desktop view: Text + Chevron */}
                       <span className="hidden sm:flex items-center gap-2">
