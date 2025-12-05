@@ -1,7 +1,7 @@
   "use client";
 
   import { NavLink } from "react-router-dom";
-  import {LayoutDashboard,Home,Calendar,List, Bookmark, UserCheck} from "lucide-react";
+  import {Home,Calendar, Bookmark, UserCheck} from "lucide-react";
   import { auth } from "@/lib/firebase";
   import gcef1 from "@/assets/gcef1.png";
   import { cn } from "@/lib/utils";

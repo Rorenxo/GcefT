@@ -2,8 +2,6 @@
 
   import { NavLink } from "react-router-dom"
   import { Calendar, CalendarPlus, LayoutDashboard, List, UserCheck, ChartNoAxesCombined, Settings } from "lucide-react" 
-  import { useAuth } from "@/hooks/useAuth"
-  import { Button } from "@/shared/components/ui/button"
   import { cn } from "@/lib/utils"
   import gcef1 from '@/assets/gcef1.png';
 
