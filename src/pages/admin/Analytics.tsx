@@ -429,7 +429,6 @@ const topOrganizersPie = useMemo(() => {
                   <PieChart>
                     <Tooltip />
                     <Pie
-                      activeIndex={activePieIndex}
                       activeShape={renderActiveShape}
                       data={topOrganizersPie}
                       dataKey="value"

@@ -59,6 +59,8 @@ export default function RegistrationConfirmModal({
     img.onload = () => {
       canvas.width = img.width
       canvas.height = img.height
+      ctx.fillStyle = "white"
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
       ctx?.drawImage(img, 0, 0)
       const link = document.createElement("a")
       link.href = canvas.toDataURL("image/png")
@@ -112,7 +114,6 @@ export default function RegistrationConfirmModal({
                       value={registeredData.studentNumber}
                       size={160}
                       level="H"
-                      includeMargin={true}
                     />
                   </div>
                   <p className="font-mono text-sm font-bold text-zinc-800 mb-3">

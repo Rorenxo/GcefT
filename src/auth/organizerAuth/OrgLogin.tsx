@@ -32,7 +32,6 @@ export default function Auth() {
   const [lastName, setLastName] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [formError, setFormError] = useState("") 
-  const [course, setCourse] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
   const [organizerName, setOrganizerName] = useState("")
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -81,7 +80,6 @@ export default function Auth() {
           email,
           //password
           organizerName,
-          course,
           status: "pending",
           createdAt: new Date(),
         })
