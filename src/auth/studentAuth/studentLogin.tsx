@@ -1,28 +1,13 @@
-"use client"
-
 import { useState, useEffect, type FormEvent } from "react"
-import {
-  getAuth,
-  setPersistence,
-  browserLocalPersistence,
-  browserSessionPersistence,
-} from "firebase/auth"
+import {getAuth,setPersistence,browserLocalPersistence,browserSessionPersistence,} from "firebase/auth"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/shared/components/ui/button"
 import { Input } from "@/shared/components/ui/input"
 import { Label } from "@/shared/components/ui/label"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui/card"
-import { Checkbox } from "@/shared/components/ui/checkbox"
+import {Card,CardContent,CardDescription,CardHeader,CardTitle,} from "@/shared/components/ui/card"
+import { Checkbox } from "@/shared/components/ui/checkbox"  
 import { PasswordInput } from "@/shared/components/ui/passwordInput"
-import { doc, setDoc } from "firebase/firestore"
-import { db, auth } from "@/lib/firebase"
 import { motion } from "framer-motion"
 import RegistrationConfirmModal from "@/auth/studentAuth/RegistrationConfirmModal"
 import gcef1 from "@/assets/gcef1.png"
