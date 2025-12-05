@@ -1,9 +1,11 @@
 {
+  "buildCommand": "CI=false npm run build",
   "rewrites": [
     {
       "source": "/((?!api/|.*\\..*).*)",
-      "destination": "/index.html",
-    "buildCommand": "CI=false npm run build"
+      "destination": "/index.html"
     }
   ]
 }
+
+
